@@ -4,7 +4,7 @@ FROM ruby:3.3.7
 ENV LANG=C.UTF-8 \
     TZ=Asia/Tokyo
 
-# Node.js リポジトリの追加と必要なパッケージのインストール
+# Node.js リポジトリの追加と必要なパッケージのインストールを1つのRUNで実行
 RUN apt-get update -qq \
 && apt-get install -y ca-certificates curl gnupg \
 && mkdir -p /etc/apt/keyrings \
@@ -29,7 +29,7 @@ ENV PATH="/root/.bun/bin:${PATH}"
 
 WORKDIR /myapp
 
-# Gemfile を先にコピーして bundle install
+# Gemfile を先にコピーして bundle install（キャッシュ最適化）
 COPY Gemfile Gemfile.lock /myapp/
 RUN gem install bundler && bundle install
 
