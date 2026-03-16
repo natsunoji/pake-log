@@ -18,6 +18,7 @@ RUN apt-get update -qq \
     libvips-dev \
     nodejs \
     vim \
+    nano \
     git \
     postgresql-client \
 && apt-get clean \
