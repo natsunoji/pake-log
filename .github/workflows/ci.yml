@@ -74,7 +74,7 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install ...
+        run: sudo apt-get update && sudo apt-get install -y libvips
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -87,12 +87,6 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
-
-      - name: Check node_modules  # ← 確認用(今回追加)
-        run: |
-          echo "=== Checking if node_modules exists ==="
-          ls -la node_modules/ || echo "node_modules directory not found"
-          ...
 
       - name: Build CSS  # ← Tailwind CSS のビルド
         run: ./node_modules/.bin/tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css
