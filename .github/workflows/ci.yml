@@ -89,7 +89,7 @@ jobs:
           bundler-cache: true
 
       - name: Build CSS  # ← Tailwind CSS のビルド
-        run: ./node_modules/.bin/tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css
+        run: yarn build:css
 
       - name: Run tests  # ← テストの実行(Ruby が必要!)
         env:
