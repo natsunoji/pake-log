@@ -85,6 +85,12 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
+      - name: Install JavaScript dependencies
+        run: yarn install
+
+      - name: Build CSS
+        run: yarn build:css
+
       - name: Run tests
         env:
           RAILS_ENV: test
