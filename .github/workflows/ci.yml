@@ -79,14 +79,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install JavaScript dependencies
+        run: yarn install --production=false
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
-
-      - name: Install JavaScript dependencies
-        run: yarn install --production=false
 
       - name: Build CSS
         run: yarn build:css
