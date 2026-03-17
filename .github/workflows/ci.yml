@@ -74,24 +74,29 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips postgresql-client
+        run: sudo apt-get update && sudo apt-get install -y libvips
 
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Ruby
+      - name: Install JavaScript dependencies  # ← yarn install
+        run: yarn install --production=false
+
+      - name: Set up Ruby  # ← Ruby のセットアップ
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Run tests
+      - name: Build CSS 
+        run: yarn run build:css
+
+      - name: Run tests  # ← テストの実行(Ruby が必要!)
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test test:system
-
+      
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
         if: failure()

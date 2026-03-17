@@ -21,6 +21,7 @@ RUN apt-get update -qq \
     nano \
     git \
     postgresql-client \
+&& npm install -g yarn \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
 
