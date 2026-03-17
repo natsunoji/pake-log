@@ -74,30 +74,35 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips postgresql-client
+        run: sudo apt-get update && sudo apt-get install ...
 
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install JavaScript dependencies
+      - name: Install JavaScript dependencies  # ← yarn install
         run: yarn install --production=false
 
-      - name: Set up Ruby
+      - name: Set up Ruby  # ← Ruby のセットアップ
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Build CSS
+      - name: Check node_modules  # ← 確認用(今回追加)
+        run: |
+          echo "=== Checking if node_modules exists ==="
+          ls -la node_modules/ || echo "node_modules directory not found"
+          ...
+
+      - name: Build CSS  # ← Tailwind CSS のビルド
         run: ./node_modules/.bin/tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css
 
-      - name: Run tests
+      - name: Run tests  # ← テストの実行(Ruby が必要!)
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test test:system
-
+      
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
         if: failure()
