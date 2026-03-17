@@ -88,8 +88,8 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Build CSS  # ← Tailwind CSS のビルド
-        run: yarn build:css
+      - name: Build CSS 
+        run: yarn run build:css
 
       - name: Run tests  # ← テストの実行(Ruby が必要!)
         env:
