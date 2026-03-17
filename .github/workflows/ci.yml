@@ -86,7 +86,7 @@ jobs:
           bundler-cache: true
 
       - name: Install JavaScript dependencies
-        run: yarn install
+        run: yarn install --production=false
 
       - name: Build CSS
         run: yarn build:css
