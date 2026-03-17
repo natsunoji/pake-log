@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@source "../../views/**/*.erb";
+@source "../../helpers/**/*.rb";
+@source "../../javascript/**/*.js";
+
+@theme {
+  --color-primary: #0D233E;
+  --color-accent: #A2D235;
+  --color-secondary: #E5E7EB;
+}
