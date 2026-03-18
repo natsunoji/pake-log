@@ -1,0 +1,20 @@
+<% flash.each do |type, message| %>
+  <% 
+    # ステータスに関わる色は、ブランドカラーとは別にRails標準のセマンティクスを維持する
+    bg_color = type == "notice" ? "bg-emerald-50 border-emerald-200 text-emerald-800" : "bg-rose-50 border-rose-200 text-rose-800"
+    icon_color = type == "notice" ? "text-emerald-400" : "text-rose-400"
+  %>
+  <div data-controller="flash" 
+      class="fixed top-20 right-4 z-50 max-w-md px-6 py-4 rounded-xl shadow-2xl border transition-all duration-500 <%= bg_color %>">
+    <div class="flex items-center space-x-3">
+      <div class="<%= icon_color %>">
+        <% if type == "notice" %>
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+        <% else %>
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+        <% end %>
+      </div>
+      <span class="text-sm font-bold"><%= message %></span>
+    </div>
+  </div>
+<% end %>

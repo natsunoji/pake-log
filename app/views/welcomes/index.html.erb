@@ -1,6 +1,20 @@
-<div class="bg-primary text-white p-8">
-  <p class="text-accent text-xl mt-4">これはアクセントカラーのテキストです</p>
-</div>
+<%# 全体を上下にゆったりとした余白(py-20)で包む %>
+<div class="flex flex-col items-center justify-center py-20">
+  
+  <div class="text-center">
+    <%# アイコンエリア：背景色を少し薄くして存在感を調整 %>
+    <div class="inline-flex items-center justify-center w-20 h-20 bg-slate-50 rounded-full mb-6 shadow-sm">
+      <i class="bi bi-journal-plus text-3xl text-slate-300"></i>
+    </div>
 
-<h1>Welcome to Pake-log!</h1>
-<p>これは最初のページです</p>
+    <%# メインメッセージ：text-primary（ネイビー）を強調 %>
+    <h1 class="text-2xl font-bold text-primary mb-3">記録はまだありません</h1>
+    
+    <%# サブテキスト：行間(leading-loose)を広げて読みやすく %>
+    <p class="text-slate-500 leading-loose max-w-xs mx-auto">
+      下の「追加」ボタンから、<br>
+      新しい説明書を登録しましょう。
+    </p>
+  </div>
+
+</div>
