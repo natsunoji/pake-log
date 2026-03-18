@@ -13,3 +13,8 @@
  *= require_tree .
  *= require_self
  */
+/* 🔥 幅固定バグ対策（今回の原因） */
+html, body {
+  width: 100% !important;
+  max-width: none !important;
+}
