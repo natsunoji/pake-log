@@ -8,5 +8,8 @@ module PakeLog
     config.load_defaults 7.2
 
     config.autoload_lib(ignore: %w[assets tasks])
+
+    # デフォルトの言語を日本語に設定
+    config.i18n.default_locale = :ja
   end
 end
