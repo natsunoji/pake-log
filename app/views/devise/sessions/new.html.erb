@@ -1,0 +1,47 @@
+<div class="max-w-md mx-auto mt-10 px-6 py-8 bg-white shadow-xl rounded-2xl border border-base-border">
+  <h2 class="text-2xl font-bold text-center text-primary mb-8">ログイン</h2>
+
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+    <%# メールアドレス %>
+    <div class="mb-5">
+      <%= f.label :email, "メールアドレス", class: "block text-sm font-bold text-base-text mb-2" %>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", 
+          class: "w-full px-4 py-3 rounded-xl border border-base-border focus:ring-2 focus:ring-accent focus:border-transparent outline-none transition-all" %>
+    </div>
+
+    <%# パスワード %>
+    <div class="mb-5" data-controller="password-visibility">
+      <%= f.label :password, "パスワード", class: "block text-sm font-bold text-base-text mb-2" %>
+      <div class="relative flex items-center">
+        <%= f.password_field :password, autocomplete: "current-password", 
+            data: { password_visibility_target: "input" },
+            class: "w-full px-4 py-3 rounded-xl border border-base-border focus:ring-2 focus:ring-accent focus:border-transparent outline-none transition-all bg-base-bg pr-12" %>
+        
+        <%# 目玉アイコンボタン %>
+        <button type="button" 
+                data-action="password-visibility#toggle" 
+                class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary transition-colors cursor-pointer">
+          <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
+        </button>
+      </div>
+    </div>
+
+    <%# ログイン情報保持 %>
+    <% if devise_mapping.rememberable? %>
+      <div class="flex items-center mb-6">
+        <%= f.check_box :remember_me, class: "w-4 h-4 text-primary border-base-border rounded focus:ring-accent" %>
+        <%= f.label :remember_me, "ログイン情報を保存する", class: "ml-2 block text-sm text-gray-600" %>
+      </div>
+    <% end %>
+
+    <%# ログインボタン %>
+    <div class="mb-6">
+      <%= f.submit "ログイン", class: "w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg hover:opacity-90 transition-opacity cursor-pointer" %>
+    </div>
+  <% end %>
+
+  <%# 下部のリンク（パスワード忘れなど） %>
+  <div class="text-center text-sm">
+    <%= render "devise/shared/links" %>
+  </div>
+</div>

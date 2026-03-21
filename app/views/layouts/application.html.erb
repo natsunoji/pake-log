@@ -22,7 +22,9 @@
       </div>
     </main>
 
-    <%# ボトムナビは独立 %>
-    <%= render 'shared/bottom_navigation' %>
+    <%# 修正ポイント：ログインしている時だけボトムナビを出す %>
+    <% if user_signed_in? %>
+      <%= render 'shared/bottom_navigation' %>
+    <% end %>
   </body>
 </html>
