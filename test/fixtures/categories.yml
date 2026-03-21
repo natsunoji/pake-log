@@ -1,9 +1,7 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+one:
+  user: standard_user  # users.ymlで定義した名前に合わせる
+  name: "家電"
 
-# one:
-  # user: one
-  # name: MyString
-
-# two:
-  # user: two
-  # name: MyString
+two:
+  user: standard_user
+  name: "キッチン"
