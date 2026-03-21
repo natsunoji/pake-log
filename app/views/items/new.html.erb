@@ -1,0 +1,82 @@
+<div class="bg-white min-h-screen">
+  <div class="bg-white shadow-sm mb-0">
+    <header class="py-3 text-center">
+      <h1 class="text-xl font-extrabold text-primary">新規登録</h1>
+    </header>
+  </div>
+
+  <div class="px-6 py-8 pb-32">
+    <%= form_with(model: @item, local: true, multipart: true) do |f| %>
+
+      <%# 画像エリア %>
+      <div class="mb-8" data-controller="image-preview">
+        <div class="flex items-center mb-1.5 ml-1">
+          <span class="text-sm font-bold text-primary">パケの画像</span>
+          <span class="ml-2 text-[10px] font-bold text-red-500">（必須）</span>
+        </div>
+        
+        <% if @item.errors.any? %>
+          <p class="text-[10px] text-red-500 font-bold mb-2 ml-1 animate-pulse">
+            <i class="bi bi-arrow-up"></i> お手数ですが、もう一度画像を選択してください
+          </p>
+        <% end %>
+
+        <%= f.fields_for :item_images, @item.item_images do |image_f| %>
+          <%= image_f.label :image, for: "image-input", class: "block cursor-pointer group relative overflow-hidden" do %>
+            <div data-image-preview-target="preview" class="w-full h-48 border border-dashed border-gray-200 rounded-[32px] flex flex-col items-center justify-center bg-[#f1f5f9] group-hover:border-lime-400 transition bg-cover bg-center">
+              <div data-image-preview-target="placeholder" class="flex flex-col items-center justify-center">
+                <i class="bi bi-camera text-4xl text-gray-400 mb-2"></i>
+                <p class="text-[10px] font-medium text-gray-500">タップして画像をアップロード</p>
+              </div>
+            </div>
+            <%= image_f.file_field :image, id: "image-input", class: "hidden", accept: 'image/*', 
+                data: { action: "change->image-preview#preview" } %>
+          <% end %>
+        <% end %>
+      </div>
+
+      <%# パケの名前 %>
+      <div class="mb-6">
+        <div class="flex items-center mb-1.5 ml-1">
+          <%= f.label :name, "パケの名前", for: "item-name-input", class: "text-sm font-bold text-primary" %>
+          <span class="ml-2 text-[10px] font-bold text-red-500">（必須）</span>
+        </div>
+        <p class="text-[10px] text-gray-400 mb-2 ml-1">※ 同じ名前は登録できません。</p>
+        <%= f.text_field :name, id: "item-name-input", placeholder: "例：ドライヤー（型番）", class: "w-full px-5 py-3.5 border-none rounded-2xl bg-[#f1f5f9] text-primary text-base placeholder:text-gray-400 focus:ring-2 focus:ring-lime-300 transition" %>
+      </div>
+
+      <%# カテゴリ %>
+      <div class="mb-6">
+        <div class="flex items-center mb-1.5 ml-1">
+          <%= f.label :category_id, "カテゴリ", class: "text-sm font-bold text-primary" %>
+          <span class="ml-2 text-[10px] font-bold text-gray-400">（任意）</span>
+        </div>
+        <div class="relative">
+          <%= f.collection_select :category_id, Category.all, :id, :name, { prompt: "カテゴリを選択" }, { class: "w-full px-5 py-3.5 !appearance-none border-none rounded-2xl bg-[#f1f5f9] text-primary text-base focus:ring-2 focus:ring-lime-300 transition", style: "background-image: none;" } %>
+          <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-gray-400"><i class="bi bi-chevron-down text-lg"></i></div>
+        </div>
+      </div>
+
+      <%# メモ %>
+      <div class="mb-8">
+        <div class="flex items-center mb-1.5 ml-1">
+          <%= f.label :memo, "メモ", class: "text-sm font-bold text-primary" %>
+          <span class="ml-2 text-[10px] font-bold text-gray-400">（任意）</span>
+        </div>
+        <%# ▼ メモの注意書きを追加 %>
+        <p class="text-[10px] text-gray-400 mb-2 ml-1">※ 255文字以内。購入日や場所など自由にメモできます。</p>
+        <%= f.text_area :memo, placeholder: "購入日、場所など...", rows: 3, class: "w-full px-5 py-3.5 border-none rounded-2xl bg-[#f1f5f9] text-primary text-base placeholder:text-gray-400 focus:ring-2 focus:ring-lime-300 transition resize-none" %>
+      </div>
+
+      <div class="bg-warning-bg rounded-xl p-3 flex items-center space-x-2.5 mb-6 border border-warning-border">
+        <i class="bi bi-exclamation-triangle text-base text-warning-icon"></i>
+        <p class="text-[10px] leading-tight text-warning-text font-medium">個人情報は登録しないでください。</p>
+      </div>
+
+      <div class="text-center mb-4"><p class="text-[10px] text-gray-400 font-medium">※登録後の変更も可能です。</p></div>
+      <div class="relative z-10">
+        <%= f.submit "この内容で登録する", class: "w-full bg-primary text-white font-extrabold py-4 rounded-full text-lg hover:opacity-90 active:translate-y-0.5 transition shadow-sm" %>
+      </div>
+    <% end %>
+  </div>
+</div>

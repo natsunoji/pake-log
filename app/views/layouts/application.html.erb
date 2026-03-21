@@ -11,18 +11,14 @@
   </head>
 
   <body class="min-h-screen m-0 p-0 bg-white">
-    <%# ヘッダーは独立 %>
     <%= render 'shared/header' %>
 
-    <%# メイン：ヘッダー(pt-16)とナビ(pb-24)の高さ分だけ余白を確保 %>
-    <main class="w-full pt-16 pb-24">
-      <div class="px-5">
-        <%= render 'shared/flash_messages' %>
-        <%= yield %>
-      </div>
+    <main class="w-full pt-16">
+      <%= render 'shared/flash_messages' %>
+      <%= yield %>
     </main>
 
-    <%# 修正ポイント：ログインしている時だけボトムナビを出す %>
+    <%# ログインしている時だけボトムナビを出す %>
     <% if user_signed_in? %>
       <%= render 'shared/bottom_navigation' %>
     <% end %>

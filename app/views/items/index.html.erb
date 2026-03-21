@@ -1,0 +1,61 @@
+<div class="bg-gray-100 min-h-screen">
+  
+  <%# 1. & 2. ヘッダーとカテゴリ（白背景エリア） %>
+  <div class="bg-white shadow-sm mb-0">
+    <header class="py-3 text-center">
+      <h1 class="text-xl font-extrabold text-[#1e293b]">ライブラリ</h1>
+    </header>
+
+    <div class="pb-2">
+      <%# カテゴリチップス %>
+      <div class="flex overflow-x-auto space-x-2 px-2 scrollbar-hide">
+        <button class="bg-lime-400 text-white px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap mb-1">全て</button>
+        <% current_user.categories.each do |category| %>
+          <button class="bg-gray-100 text-gray-600 px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap mb-1">
+            <%= category.name %>
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# 3. リスト部分 %>
+  <div class="px-2 py-5 space-y-4 pb-32">
+    <% if @items.empty? %>
+      <div class="text-center py-20 bg-white rounded-2xl mx-2">
+        <p class="text-gray-400 font-bold">まだパケが登録されていません</p>
+      </div>
+    <% else %>
+      <% @items.each do |item| %>
+        <div class="bg-white p-4 rounded-2xl shadow-sm flex items-center w-full">
+          
+          <%# 画像表示エリア：Active Storage 対応 %>
+          <div class="w-20 h-20 bg-gray-100 rounded-xl mr-4 flex-shrink-0 overflow-hidden">
+            <%# アイテムに関連付けられた最初の画像があるかチェック %>
+            <% if item.item_images.first&.image&.attached? %>
+              <%= image_tag item.item_images.first.image, class: "w-full h-full object-cover" %>
+            <% else %>
+              <%# 画像がない場合のプレースホルダー %>
+              <div class="w-full h-full flex items-center justify-center text-gray-300">
+                <i class="bi bi-camera text-2xl"></i>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="flex-grow">
+            <h3 class="font-bold text-gray-800 text-lg leading-tight mb-1"><%= item.name %></h3>
+            <% if item.category.present? %>
+              <span class="inline-block bg-lime-100 text-lime-700 text-[10px] px-2 py-0.5 rounded font-bold">
+                <%= item.category.name %>
+              </span>
+            <% end %>
+          </div>
+
+          <div class="text-[10px] text-gray-400 self-end pb-1">
+            <%= time_ago_in_words(item.created_at) %>前
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>
