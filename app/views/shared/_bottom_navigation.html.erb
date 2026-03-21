@@ -1,25 +1,28 @@
-<%# inset-x-0 を left-0 right-0 w-full に明示化 %>
 <nav class="fixed bottom-0 left-0 right-0 w-full h-20 bg-white border-t border-gray-100 z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
   
-  <%# 念のため、ここにも w-full を追加 %>
   <div class="max-w-md mx-auto h-full flex items-center w-full pb-safe">
     
-    <a href="#" class="flex-1 flex flex-col items-center text-slate-800">
-      <i class="bi bi-house text-2xl"></i>
-      <span class="text-[10px] font-bold mt-1">ホーム</span>
-    </a>
+    <%# --- ライブラリ --- %>
+    <%= link_to items_path, class: "flex-1 flex flex-col items-center text-slate-800" do %>
+      <%# 塗りつぶしの本棚/コレクションアイコン %>
+      <i class="bi bi-collection-fill text-2xl"></i>
+      <span class="text-[10px] font-bold mt-1">ライブラリ</span>
+    <% end %>
 
+    <%# --- 中央の追加ボタン --- %>
     <div class="flex-1 flex flex-col items-center">
       <div class="relative -top-6">
-        <a href="#" class="w-16 h-16 bg-[#b4d455] rounded-full flex items-center justify-center shadow-lg border-4 border-white text-slate-700">
+        <%= link_to new_item_path, class: "w-16 h-16 bg-[#b4d455] rounded-full flex items-center justify-center shadow-lg border-4 border-white text-slate-700" do %>
           <i class="bi bi-plus text-4xl font-bold"></i>
-        </a>
+        <% end %>
         <span class="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[10px] font-bold text-slate-800 w-full text-center">追加</span>
       </div>
     </div>
 
+    <%# --- 設定 --- %>
     <a href="#" class="flex-1 flex flex-col items-center text-slate-800">
-      <i class="bi bi-gear text-2xl"></i>
+      <%# 塗りつぶしの歯車アイコン %>
+      <i class="bi bi-gear-fill text-2xl"></i>
       <span class="text-[10px] font-bold mt-1">設定</span>
     </a>
 

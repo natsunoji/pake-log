@@ -1,5 +1,7 @@
 class ItemImage < ApplicationRecord
   belongs_to :item
 
-  validates :image_url, presence: true
+  has_one_attached :image
+
+  validates :image, presence: true
 end

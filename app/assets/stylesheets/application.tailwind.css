@@ -2,8 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 🔥 幅固定バグ対策（今回の原因） */
-html, body {
-  width: 100% !important;
-  max-width: none !important;
+@layer base {
+  /* 幅固定バグ対策 */
+  html, body {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  /* セレクトボックスの標準矢印を、アプリ全体で本質的に無効化する */
+  /* appearance: none をここで指定することで、HTML側の記述がスッキリする */
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
 }
