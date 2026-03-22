@@ -1,44 +1,45 @@
 <div class="bg-gray-100 min-h-screen">
   
-  <%# 1. & 2. ヘッダーとカテゴリ（白背景エリア） %>
   <div class="bg-white shadow-sm mb-0">
     <header class="py-3 text-center">
       <h1 class="text-xl font-extrabold text-[#1e293b]">ライブラリ</h1>
     </header>
 
     <div class="pb-2">
-      <%# カテゴリチップス %>
       <div class="flex overflow-x-auto space-x-2 px-2 scrollbar-hide">
-        <button class="bg-lime-400 text-white px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap mb-1">全て</button>
+        <%# 「全て」ボタン %>
+        <% all_active = params[:q].blank? || params.dig(:q, :category_id_eq).blank? %>
+        <%= link_to "全て", items_path, 
+            class: "#{all_active ? 'bg-lime-400' : 'bg-gray-100'} text-[#1e293b] px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap mb-1" %>
+
         <% current_user.categories.each do |category| %>
-          <button class="bg-gray-100 text-gray-600 px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap mb-1">
-            <%= category.name %>
-          </button>
+          <% is_active = params.dig(:q, :category_id_eq).to_s == category.id.to_s %>
+          
+          <%= link_to category.name, 
+              items_path(q: { category_id_eq: category.id }), 
+              class: "#{is_active ? 'bg-lime-400' : 'bg-gray-100'} text-[#1e293b] px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap mb-1" %>
         <% end %>
       </div>
     </div>
   </div>
 
-<%# 3. リスト部分 %>
+  <%# 3. リスト部分 %>
   <div class="px-2 py-5 space-y-4 pb-32">
     <% if @items.empty? %>
       <div class="text-center py-20 bg-white rounded-2xl mx-2">
-        <p class="text-gray-400 font-bold">まだパケが登録されていません</p>
+        <p class="text-gray-400 font-bold">対象のパケは見つかりませんでした</p>
       </div>
     <% else %>
       <% @items.each do |item| %>
         <div class="bg-white p-4 rounded-2xl shadow-sm flex items-center w-full">
           
-          <%# 画像表示エリア：Active Storage 対応 %>
+          <%# 画像表示エリア %>
           <div class="w-20 h-20 bg-gray-100 rounded-xl mr-4 flex-shrink-0 overflow-hidden">
-            <%# 変数に一度代入しておくと、スッキリ書けます %>
             <% first_image = item.item_images.first %>
 
             <% if first_image&.image&.attached? %>
-              <%# Modelで定義した display_image を使用 %>
               <%= image_tag first_image.display_image([200, 200]), class: "w-full h-full object-cover" %>
             <% else %>
-              <%# 画像がない場合のプレースホルダー %>
               <div class="w-full h-full flex items-center justify-center text-gray-300">
                 <i class="bi bi-camera text-2xl"></i>
               </div>
@@ -61,3 +62,4 @@
       <% end %>
     <% end %>
   </div>
+</div>

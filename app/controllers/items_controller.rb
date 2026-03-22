@@ -2,9 +2,15 @@ class ItemsController < ApplicationController
   # ログインしていないユーザーがアクセスしたらログイン画面に飛ばす
   before_action :authenticate_user!
 
-  def index
-    # ログイン中のユーザーに紐づくアイテムを、新しい順に取得する
-    @items = current_user.items.order(created_at: :desc)
+def index
+    # 1. 検索オブジェクト (@q) を作成
+    @q = current_user.items.ransack(params[:q])
+
+    # 2. 検索結果 (@items) を取得
+    # includes を使ってカテゴリと画像をまとめて読み込む（高速化）
+    @items = @q.result(distinct: true)
+                .includes(:category, item_images: { image_attachment: :blob })
+                .order(created_at: :desc)
   end
 
   def new
