@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <%# 3. リスト部分 %>
+<%# 3. リスト部分 %>
   <div class="px-2 py-5 space-y-4 pb-32">
     <% if @items.empty? %>
       <div class="text-center py-20 bg-white rounded-2xl mx-2">
@@ -31,9 +31,12 @@
           
           <%# 画像表示エリア：Active Storage 対応 %>
           <div class="w-20 h-20 bg-gray-100 rounded-xl mr-4 flex-shrink-0 overflow-hidden">
-            <%# アイテムに関連付けられた最初の画像があるかチェック %>
-            <% if item.item_images.first&.image&.attached? %>
-              <%= image_tag item.item_images.first.image, class: "w-full h-full object-cover" %>
+            <%# 変数に一度代入しておくと、スッキリ書けます %>
+            <% first_image = item.item_images.first %>
+
+            <% if first_image&.image&.attached? %>
+              <%# Modelで定義した display_image を使用 %>
+              <%= image_tag first_image.display_image([200, 200]), class: "w-full h-full object-cover" %>
             <% else %>
               <%# 画像がない場合のプレースホルダー %>
               <div class="w-full h-full flex items-center justify-center text-gray-300">
@@ -58,4 +61,3 @@
       <% end %>
     <% end %>
   </div>
-</div>
