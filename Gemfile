@@ -19,7 +19,7 @@ gem "jbuilder"
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 # Tailwind CSS v3系を安定して利用するためにバージョンを固定（~> 2.0 が v3 対応版）
-gem "tailwindcss-rails", "~> 2.0"
+gem "tailwindcss-rails", "2.6.1"
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
 

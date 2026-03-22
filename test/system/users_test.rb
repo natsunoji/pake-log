@@ -9,20 +9,17 @@ class UsersTest < ApplicationSystemTestCase
     fill_in "パスワード（6文字以上）", with: "password"
     fill_in "パスワード（確認用）", with: "password"
 
-    click_on "登録する"
+    find('input[type="submit"]', wait: 5).click
 
     assert_text "テストユーザー さん"
   end
 
   test "ログインができること" do
+    # ...ここは今のままでOK...
     visit new_user_session_path
-
-    # fixtures/users.yml に test@example.com が定義されている前提
     fill_in "メールアドレス", with: "test@example.com"
     fill_in "パスワード", with: "password"
-
     click_on "ログイン"
-
     assert_text " さん"
   end
 end
