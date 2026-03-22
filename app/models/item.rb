@@ -14,6 +14,16 @@ class Item < ApplicationRecord
   # 画像枚数のカスタムバリデーション
   validate :item_images_count
 
+  # 検索を許可する属性（カラム）を指定
+  def self.ransackable_attributes(auth_object = nil)
+    [ "name", "category_id", "created_at" ]
+  end
+
+  # アソシエーション（関連）先の検索を許可
+  def self.ransackable_associations(auth_object = nil)
+    [ "category", "item_images" ]
+  end
+
   private
 
   def item_images_count
