@@ -19,9 +19,8 @@
       <%= yield %>
     </main>
 
-    <%# ログインしている時だけボトムナビを出す %>
-    <% if user_signed_in? %>
+    <%# 修正：ログイン済み、かつ「完了画面以外」の時だけボトムナビを出す %>
+    <% if user_signed_in? && !(controller_name == 'items' && action_name == 'create') %>
       <%= render 'shared/bottom_navigation' %>
     <% end %>
-  </body>
 </html>

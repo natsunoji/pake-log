@@ -184,3 +184,10 @@ ja:
       long: "%Y/%m/%d %H:%M"
       short: "%m/%d %H:%M"
     pm: 午後
+  activerecord:
+    attributes:
+      item:
+        name: "名前"
+        images: "パケの画像"
+        category_id: "カテゴリ"
+        memo: "メモ"

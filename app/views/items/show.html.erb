@@ -1,0 +1,118 @@
+<div class="bg-white min-h-screen pb-32">
+  <%# ヘッダー：デザイン案の「説明書詳細」風 %>
+  <header class="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-white/95 backdrop-blur-md border-b border-gray-100">
+    <%= link_to items_path, class: "flex items-center justify-center w-10 h-10 rounded-full text-primary" do %>
+      <i class="bi bi-arrow-left text-2xl"></i>
+    <% end %>
+    <h1 class="text-base font-bold tracking-tight text-primary">アイテム詳細</h1>
+    <div class="flex items-center gap-1">
+      <%= link_to item_path(@item), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" }, class: "flex items-center justify-center w-10 h-10 rounded-full text-primary" do %>
+        <i class="bi bi-trash text-xl"></i>
+      <% end %>
+      <%= link_to edit_item_path(@item), class: "flex items-center justify-center w-10 h-10 rounded-full text-primary" do %>
+        <i class="bi bi-pencil text-xl"></i>
+      <% end %>
+    </div>
+  </header>
+
+  <main class="flex-1 flex flex-col w-full">
+    <%# 画像エリア %>
+    <div class="relative w-full aspect-[3/4] bg-gray-50 overflow-hidden">
+      <% if @item.item_images.any? %>
+        <%# 1枚目：メイン画像 %>
+        <%= image_tag @item.item_images.first.image, class: "w-full h-full object-cover" %>
+        
+        <%# カバー写真ラベル %>
+        <div class="absolute bottom-16 left-0 right-0 bg-primary/70 backdrop-blur-[2px] py-1 text-center">
+          <span class="text-[10px] font-bold text-white uppercase tracking-widest">Cover Photo</span>
+        </div>
+
+        <%# ▼ [追加] 拡大するボタン（デザイン案を再現） %>
+        <button type="button" class="absolute bottom-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full bg-primary/50 backdrop-blur-md text-white border border-white/20 shadow-lg active:scale-95 transition-all">
+          <i class="bi bi-search text-sm"></i>
+          <span class="text-xs font-bold">拡大する</span>
+        </button>
+
+        <%# 複数枚ある時のドットインジケーター（HTML参考） %>
+        <% if @item.item_images.count > 1 %>
+          <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-sm">
+            <div class="w-2 h-2 rounded-full bg-white shadow-sm"></div>
+            <% (@item.item_images.count - 1).times do %>
+              <div class="w-1.5 h-1.5 rounded-full bg-white/50"></div>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="w-full h-full flex flex-col items-center justify-center text-gray-300">
+          <i class="bi bi-image text-5xl mb-2"></i>
+          <p class="text-xs font-bold">No Image</p>
+        </div>
+      <% end %>
+    </div>
+
+    <%# 情報エリア %>
+    <div class="px-6 py-6">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="inline-flex items-center gap-1.5 bg-gray-100 text-primary px-4 py-1.5 rounded-full border border-gray-200 shadow-sm">
+          <i class="bi bi-tag-fill text-xs text-gray-400"></i>
+          <span class="text-xs font-bold"><%= @item.category&.name || "カテゴリなし" %></span>
+        </span>
+      </div>
+
+      <h2 class="text-xl font-black text-primary mb-6 leading-tight">
+        <%= @item.name %>
+      </h2>
+
+      <%# メモセクション %>
+      <div class="space-y-3">
+        <div class="flex items-center gap-2 text-gray-400">
+          <i class="bi bi-chat-left-text text-lg"></i>
+          <h3 class="text-xs font-bold uppercase tracking-widest">メモ</h3>
+        </div>
+        <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+          <p class="text-primary text-sm leading-relaxed whitespace-pre-wrap font-medium">
+            <%= @item.memo.presence || "メモはありません。" %>
+          </p>
+        </div>
+      </div>
+
+      <%# サブ画像（2枚目以降） %>
+      <% if @item.item_images.count > 1 %>
+        <div class="mt-8">
+          <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">その他の画像</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <% @item.item_images.offset(1).each do |item_image| %>
+              <div class="aspect-square rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                <%= image_tag item_image.image, class: "w-full h-full object-cover" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <%# 登録日時 %>
+      <div class="mt-10 pt-6 border-t border-gray-50 text-right">
+        <p class="text-[10px] text-gray-300 font-bold">
+          登録日時 : <%= @item.created_at.strftime("%Y/%m/%d") %>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <%# ナビゲーション（固定） %>
+  <nav class="fixed bottom-0 left-0 right-0 z-20 flex w-full items-center justify-between border-t border-gray-100 bg-white/95 px-8 pb-6 pt-3 backdrop-blur-md">
+    <%= link_to items_path, class: "flex flex-col items-center gap-1 text-gray-400" do %>
+      <i class="bi bi-house text-2xl"></i>
+      <span class="text-[10px] font-bold">ライブラリ</span>
+    <% end %>
+    <%= link_to new_item_path, class: "relative -top-6" do %>
+      <div class="flex h-14 w-14 items-center justify-center rounded-full bg-lime-400 shadow-lg shadow-lime-400/40 ring-4 ring-white active:scale-95 transition-transform">
+        <i class="bi bi-plus text-3xl text-primary"></i>
+      </div>
+    <% end %>
+    <a href="#" class="flex flex-col items-center gap-1 text-gray-400">
+      <i class="bi bi-gear text-2xl"></i>
+      <span class="text-[10px] font-bold">設定</span>
+    </a>
+  </nav>
+</div>
