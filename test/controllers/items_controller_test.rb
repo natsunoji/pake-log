@@ -20,16 +20,20 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create item" do
-    assert_difference("Item.count") do
+    assert_difference("Item.count", 1) do
       post items_url, params: {
         item: {
           name: "新規パケ登録テスト",
-          item_images_attributes: [
-            { image: fixture_file_upload("test/fixtures/files/test_image.png", "image/png") }
-          ]
+          # 修正：Active Storage の場合は attributes ではなく直接 images を渡します
+          images: [ fixture_file_upload("test/fixtures/files/test_image.png", "image/png") ]
         }
       }
     end
-    assert_redirected_to items_url
+
+    # 修正ポイント：
+    # 現在の items#create は一覧へリダイレクトせず、
+    # そのまま 'create' ビューをレンダリング（おつかれさま画面）しているため
+    # assert_redirected_to ではなく :success を期待します。
+    assert_response :success
   end
 end
