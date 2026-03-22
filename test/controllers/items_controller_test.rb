@@ -25,7 +25,7 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
         item: {
           name: "新規パケ登録テスト",
           # 修正：Active Storage の場合は attributes ではなく直接 images を渡します
-          images: [fixture_file_upload("test/fixtures/files/test_image.png", "image/png")]
+          images: [ fixture_file_upload("test/fixtures/files/test_image.png", "image/png") ]
         }
       }
     end
