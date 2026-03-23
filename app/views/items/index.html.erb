@@ -1,62 +1,73 @@
-<div class="bg-gray-100 min-h-screen">
+<div class="bg-gray-100 min-h-screen font-sans antialiased text-primary">
   
-  <div class="bg-white shadow-sm mb-0">
-    <header class="py-3 text-center">
-      <h1 class="text-xl font-extrabold text-[#1e293b]">ライブラリ</h1>
-    </header>
+  <%# --- 1. ヘッダー & カテゴリタブエリア --- %>
+  <%= render 'shared/header' %>
 
-    <div class="pb-2">
-      <div class="flex overflow-x-auto space-x-2 px-2 scrollbar-hide">
-        <%# 「全て」ボタン %>
-        <% all_active = params[:q].blank? || params.dig(:q, :category_id_eq).blank? %>
-        <%= link_to "全て", items_path, 
-            class: "#{all_active ? 'bg-lime-400' : 'bg-gray-100'} text-[#1e293b] px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap mb-1" %>
+  <div class="bg-white/95 backdrop-blur-md border-b border-base-border/50 sticky top-16 z-30 pb-3 pt-2">
+    <div class="flex overflow-x-auto space-x-2 px-3 no-scrollbar">
+      <% all_active = params[:q].blank? || params.dig(:q, :category_id_eq).blank? %>
+      <%= link_to items_path, 
+          class: "#{all_active ? 'bg-accent border-accent' : 'bg-gray-100 border-transparent'} text-primary px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95" do %>
+        全て
+      <% end %>
 
-        <% current_user.categories.each do |category| %>
-          <% is_active = params.dig(:q, :category_id_eq).to_s == category.id.to_s %>
-          
-          <%= link_to category.name, 
-              items_path(q: { category_id_eq: category.id }), 
-              class: "#{is_active ? 'bg-lime-400' : 'bg-gray-100'} text-[#1e293b] px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap mb-1" %>
+      <% current_user.categories.each do |category| %>
+        <% is_active = params.dig(:q, :category_id_eq).to_s == category.id.to_s %>
+        <%= link_to items_path(q: { category_id_eq: category.id }), 
+            class: "#{is_active ? 'bg-accent border-accent' : 'bg-gray-100 border-transparent'} text-primary px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95" do %>
+          <%= category.name %>
         <% end %>
-      </div>
+      <% end %>
     </div>
   </div>
 
-  <%# 3. リスト部分 %>
-  <div class="px-2 py-5 space-y-4 pb-32">
+  <%# --- 2. リスト部分 --- %>
+  <div class="px-3 py-5 space-y-4 pb-32">
     <% if @items.empty? %>
-      <div class="text-center py-20 bg-white rounded-2xl mx-2">
-        <p class="text-gray-400 font-bold">対象のパケは見つかりませんでした</p>
+      <div class="text-center py-20 bg-white rounded-3xl mx-2 border border-base-border shadow-sm">
+        <i class="bi bi-search text-4xl text-gray-200 mb-4 block"></i>
+        <p class="text-base-text font-bold opacity-60">パケは見つかりませんでした</p>
       </div>
     <% else %>
       <% @items.each do |item| %>
-        <div class="bg-white p-4 rounded-2xl shadow-sm flex items-center w-full">
-          <%# 画像表示エリア %>
-          <div class="w-20 h-20 bg-gray-100 rounded-xl mr-4 flex-shrink-0 overflow-hidden">
-            <%# 修正ポイント：item_images ではなく images を直接参照する %>
+        <%= link_to item_path(item), class: "bg-white p-4 rounded-3xl shadow-sm flex items-center w-full active:scale-[0.98] transition-all duration-100 block border border-transparent active:border-base-border" do %>
+          
+          <%# 画像プレビュー %>
+          <div class="w-20 h-20 bg-base-bg rounded-2xl mr-4 flex-shrink-0 overflow-hidden border border-black/5 flex items-center justify-center">
             <% if item.images.attached? %>
-              <%# 1枚目の画像を表示 %>
-              <%= image_tag item.images.first, class: "w-full h-full object-cover" %>
+              <%# 💡 image_tag を cl_image_tag に修正 %>
+              <%= cl_image_tag item.images.first.key, 
+                  transformation: [
+                    { width: 400, height: 400, crop: :fill },
+                    { fetch_format: :auto, quality: :auto }
+                  ],
+                  class: "w-full h-full object-cover" %>
             <% else %>
               <div class="w-full h-full flex items-center justify-center text-gray-300">
-                <i class="bi bi-camera text-2xl"></i>
+                <i class="bi bi-image text-2xl"></i>
               </div>
             <% end %>
           </div>
-          <div class="flex-grow">
-            <h3 class="font-bold text-gray-800 text-lg leading-tight mb-1"><%= item.name %></h3>
+
+          <%# テキストエリア %>
+          <div class="flex-grow min-w-0">
+            <h3 class="font-bold text-primary text-lg leading-tight mb-2 truncate">
+              <%= item.name %>
+            </h3>
             <% if item.category.present? %>
-              <span class="inline-block bg-lime-100 text-lime-700 text-[10px] px-2 py-0.5 rounded font-bold">
-                <%= item.category.name %>
-              </span>
+              <div class="inline-flex items-center justify-center h-6 px-3 rounded-full bg-accent text-primary shadow-sm border border-accent/20">
+                <span class="text-[10px] font-black uppercase leading-none mt-[1px]">
+                  <%= item.category.name %>
+                </span>
+              </div>
             <% end %>
           </div>
 
-          <div class="text-[10px] text-gray-400 self-end pb-1">
-            <%= time_ago_in_words(item.created_at) %>前
+          <%# 更新時間表示 %>
+          <div class="text-[10px] text-base-text self-end pb-1 whitespace-nowrap ml-2 opacity-70 font-mono italic">
+            <%= time_ago_in_words(item.updated_at) %>前
           </div>
-        </div>
+        <% end %>
       <% end %>
     <% end %>
   </div>

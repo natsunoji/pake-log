@@ -1,19 +1,42 @@
-<header class="fixed top-0 inset-x-0 h-16 bg-primary z-50 shadow-sm flex items-center justify-between px-6">
-  
-  <%# ロゴ：常に表示 %>
-  <%= link_to root_path, class: "flex items-center" do %>
-    <%= image_tag 'Pakelog_logo.svg', alt: 'PakeLog Logo', class: 'h-6 w-auto' %>
-  <% end %>
-
-  <%# 修正ポイント：ログインしている時だけ右側の要素をまるごと表示 %>
-  <% if user_signed_in? %>
-    <div class="flex items-center space-x-4">
-      <%# 名前とログアウト %>
-      <span class="text-white text-xs font-bold"><%= current_user.name %> さん</span>
-      <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "text-white focus:outline-none" do %>
-        <i class="bi bi-box-arrow-right text-2xl"></i>
+<% if local_assigns[:title] %>
+  <%# --- パターンA：作業画面用（白） --- %>
+  <div class="bg-white border-b border-base-border sticky top-0 z-40 bg-white/95 backdrop-blur-md">
+    <header class="py-4 px-4 flex items-center justify-center relative min-h-[64px]">
+      <% if local_assigns[:back_path] %>
+        <%= link_to back_path, class: "absolute left-4 top-1/2 -translate-y-1/2 text-primary active:scale-95 transition-all flex items-center justify-center w-10 h-10 rounded-full z-10" do %>
+          <i class="bi bi-arrow-left text-2xl"></i>
+        <% end %>
       <% end %>
-    </div>
-  <% end %>
-    
-</header>
+
+      <h1 class="text-xl font-extrabold tracking-tight text-primary">
+        <%= title %>
+      </h1>
+
+      <% if local_assigns[:right_content] %>
+        <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1 z-10">
+          <%= right_content %>
+        </div>
+      <% end %>
+    </header>
+  </div>
+
+<% else %>
+  <%# --- パターンB：ロゴヘッダー（紺） --- %>
+  <header class="fixed top-0 inset-x-0 h-16 bg-primary z-50 shadow-sm flex items-center justify-between px-6">
+    <%= link_to root_path, class: "flex items-center" do %>
+      <%= image_tag 'Pakelog_logo.svg', alt: 'PakeLog Logo', class: 'h-6 w-auto' %>
+    <% end %>
+
+    <%# ログインしている時だけ、右側のメニューを出す %>
+    <% if user_signed_in? %>
+      <div class="flex items-center space-x-4">
+        <span class="text-white text-xs font-bold"><%= current_user.name %> さん</span>
+        
+        <%# --- 修正：直接ログアウトせず、モーダルを開くボタンに変更 --- %>
+        <button onclick="openLogoutModal()" class="text-white focus:outline-none active:scale-95 transition-all cursor-pointer flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/10">
+          <i class="bi bi-box-arrow-right text-2xl"></i>
+        </button>
+      </div>
+    <% end %>
+  </header>
+<% end %>

@@ -1,19 +1,25 @@
 Rails.application.routes.draw do
-  resources :items, only: [ :index, :new, :create ]
+  # 1. アイテムに関する全ルートを開放 (index, show, new, create, edit, update, destroy)
+  resources :items
+
+  # 2. 認証系 (Devise)
   devise_for :users
-  get "welcomes/index"
 
+  # 3. ログイン状態によるルートの出し分け
+  # ログインしている場合は「ライブラリ（一覧）」をトップにする
+  authenticated :user do
+    root "items#index", as: :authenticated_root
+  end
+
+  # ログインしていない場合は「使い方（Welcome）」をトップにする
   root "welcomes#index"
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # --- 以下、システム・PWA関連（変更なし） ---
+
+  # ヘルスチェック
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/*
+  # PWA関連
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end

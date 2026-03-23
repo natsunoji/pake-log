@@ -3,24 +3,48 @@
   <head>
     <title>PakeLog</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen m-0 p-0 bg-white">
-    <%= render 'shared/header' %>
+  <body class="min-h-screen m-0 p-0 bg-white font-sans antialiased text-primary overflow-x-hidden">
+    
+    <%# 
+      1. ヘッダーを表示する条件：
+        - ホーム画面(items#index)
+        - または ログイン・新規登録などのDevise関連画面
+    %>
+    <% if (controller_name == 'items' && action_name == 'index') || devise_controller? %>
+      <%= render 'shared/header' %>
+    <% end %>
 
-    <main class="w-full pt-16">
+    <%# 
+      2. メインコンテンツ：
+        ヘッダーが出る画面の時だけ、上に pt-16 (64px) の余白を入れる
+    %>
+    <% has_header = (controller_name == 'items' && action_name == 'index') || devise_controller? %>
+    <main class="w-full <%= has_header ? 'pt-16' : '' %>">
       <%= render 'shared/flash_messages' %>
       <%= yield %>
     </main>
 
-    <%# 修正：ログイン済み、かつ「完了画面以外」の時だけボトムナビを出す %>
-    <% if user_signed_in? && !(controller_name == 'items' && action_name == 'create') %>
+    <%# 
+      3. ボトムナビ：
+        ログイン中 かつ ログイン画面系ではない時だけ表示
+    %>
+    <% if user_signed_in? && !devise_controller? %>
       <%= render 'shared/bottom_navigation' %>
     <% end %>
+    <% if user_signed_in? %>
+      <%= render 'shared/logout_modal' %>
+    <% end %>
+  </body> 
 </html>

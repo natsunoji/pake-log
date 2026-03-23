@@ -1,118 +1,137 @@
-<div class="bg-white min-h-screen pb-32">
-  <%# ヘッダー：デザイン案の「説明書詳細」風 %>
-  <header class="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-white/95 backdrop-blur-md border-b border-gray-100">
-    <%= link_to items_path, class: "flex items-center justify-center w-10 h-10 rounded-full text-primary" do %>
-      <i class="bi bi-arrow-left text-2xl"></i>
+<%# 全体コンテナ：carousel と image-modal のコントローラーを管理 %>
+<div class="min-h-screen bg-white pb-24 font-sans antialiased text-primary pt-3" data-controller="carousel image-modal">
+
+  <%# --- 1. Sharedヘッダー呼び出し --- %>
+  <%= render 'shared/header', 
+      title: "説明書詳細", 
+      back_path: items_path, 
+      right_content: capture { %>
+    <button onclick="openDeleteModal()" class="w-10 h-10 flex items-center justify-center text-danger hover:bg-danger-light rounded-full active:scale-95 transition-all">
+      <i class="bi bi-trash text-xl"></i>
+    </button>
+    <%= link_to edit_item_path(@item), class: "w-10 h-10 flex items-center justify-center text-primary hover:bg-base-bg rounded-full active:scale-95 transition-all" do %>
+      <i class="bi bi-pencil-square text-xl"></i>
     <% end %>
-    <h1 class="text-base font-bold tracking-tight text-primary">アイテム詳細</h1>
-    <div class="flex items-center gap-1">
-      <%= link_to item_path(@item), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" }, class: "flex items-center justify-center w-10 h-10 rounded-full text-primary" do %>
-        <i class="bi bi-trash text-xl"></i>
-      <% end %>
-      <%= link_to edit_item_path(@item), class: "flex items-center justify-center w-10 h-10 rounded-full text-primary" do %>
-        <i class="bi bi-pencil text-xl"></i>
-      <% end %>
-    </div>
-  </header>
+  <% } %>
 
-  <main class="flex-1 flex flex-col w-full">
-    <%# 画像エリア %>
-    <div class="relative w-full aspect-[3/4] bg-gray-50 overflow-hidden">
-      <% if @item.item_images.any? %>
-        <%# 1枚目：メイン画像 %>
-        <%= image_tag @item.item_images.first.image, class: "w-full h-full object-cover" %>
-        
-        <%# カバー写真ラベル %>
-        <div class="absolute bottom-16 left-0 right-0 bg-primary/70 backdrop-blur-[2px] py-1 text-center">
-          <span class="text-[10px] font-bold text-white uppercase tracking-widest">Cover Photo</span>
+  <main class="max-w-md mx-auto">
+    <%# --- 2. 画像カルーセル --- %>
+    <div class="relative w-full aspect-[3/4] bg-base-bg border-b border-base-border overflow-hidden">
+      <div class="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth" 
+           data-carousel-target="container" 
+           data-action="scroll->carousel#updateDots">
+        <% if @item.images.attached? %>
+          <% @item.images.each_with_index do |image, index| %>
+            <div class="w-full h-full flex-shrink-0 snap-center flex items-center justify-center p-2">
+              <%# 💡 image_tag を cl_image_tag に修正 %>
+              <%= cl_image_tag image.key, 
+                  transformation: [
+                    { width: 1200, height: 1200, crop: :limit },
+                    { fetch_format: :auto, quality: :auto }
+                  ],
+                  class: "max-w-full max-h-full object-contain shadow-sm rounded-lg cursor-pointer active:scale-95 transition-transform",
+                  data: { 
+                    action: "click->image-modal#open",
+                    # 💡 拡大用URLも Cloudinary のパスを指定
+                    image_modal_url_param: cl_image_path(image.key, fetch_format: :auto, quality: :auto)
+                  } %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <%# インジケータードット %>
+      <% if @item.images.attached? && @item.images.count > 1 %>
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-sm z-20 border border-black/5">
+          <% @item.images.each_with_index do |_, index| %>
+            <div class="w-1.5 h-1.5 rounded-full transition-all duration-300" data-carousel-target="dot"></div>
+          <% end %>
         </div>
+      <% end %>
 
-        <%# ▼ [追加] 拡大するボタン（デザイン案を再現） %>
-        <button type="button" class="absolute bottom-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full bg-primary/50 backdrop-blur-md text-white border border-white/20 shadow-lg active:scale-95 transition-all">
-          <i class="bi bi-search text-sm"></i>
-          <span class="text-xs font-bold">拡大する</span>
-        </button>
+      <%# 拡大ボタン %>
+      <button class="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-white active:scale-95 transition-all text-[10px] font-bold uppercase tracking-widest shadow-lg"
+              data-action="click->image-modal#open"
+              data-image-modal-url-param="<%= cl_image_path(@item.images.first.key, fetch_format: :auto, quality: :auto) if @item.images.attached? %>">
+        <i class="bi bi-zoom-in text-sm text-accent"></i> 拡大
+      </button>
+    </div>
 
-        <%# 複数枚ある時のドットインジケーター（HTML参考） %>
-        <% if @item.item_images.count > 1 %>
-          <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-sm">
-            <div class="w-2 h-2 rounded-full bg-white shadow-sm"></div>
-            <% (@item.item_images.count - 1).times do %>
-              <div class="w-1.5 h-1.5 rounded-full bg-white/50"></div>
-            <% end %>
+    <%# --- 3. 情報エリア --- %>
+    <div class="px-5 py-8 flex flex-col gap-8">
+      <div class="flex flex-col gap-3">
+        <% if @item.category.present? %>
+          <div class="flex items-center justify-center h-8 px-5 rounded-full bg-accent text-primary self-start shadow-sm border border-accent/20">
+            <span class="text-[12px] font-black tracking-widest uppercase leading-none mt-[1px]"><%= @item.category.name %></span>
           </div>
         <% end %>
-      <% else %>
-        <div class="w-full h-full flex flex-col items-center justify-center text-gray-300">
-          <i class="bi bi-image text-5xl mb-2"></i>
-          <p class="text-xs font-bold">No Image</p>
-        </div>
-      <% end %>
-    </div>
-
-    <%# 情報エリア %>
-    <div class="px-6 py-6">
-      <div class="flex items-center gap-2 mb-4">
-        <span class="inline-flex items-center gap-1.5 bg-gray-100 text-primary px-4 py-1.5 rounded-full border border-gray-200 shadow-sm">
-          <i class="bi bi-tag-fill text-xs text-gray-400"></i>
-          <span class="text-xs font-bold"><%= @item.category&.name || "カテゴリなし" %></span>
-        </span>
+        <h2 class="text-2xl font-black text-primary tracking-tight leading-tight px-1">
+          <%= @item.name %>
+        </h2>
       </div>
 
-      <h2 class="text-xl font-black text-primary mb-6 leading-tight">
-        <%= @item.name %>
-      </h2>
-
-      <%# メモセクション %>
-      <div class="space-y-3">
-        <div class="flex items-center gap-2 text-gray-400">
-          <i class="bi bi-chat-left-text text-lg"></i>
-          <h3 class="text-xs font-bold uppercase tracking-widest">メモ</h3>
+      <section>
+        <div class="flex items-center gap-2 mb-4 text-base-text">
+          <i class="bi bi-sticky-fill text-accent"></i>
+          <h2 class="text-[10px] font-black uppercase tracking-[0.2em] leading-none">Package Memo</h2>
         </div>
-        <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
-          <p class="text-primary text-sm leading-relaxed whitespace-pre-wrap font-medium">
-            <%= @item.memo.presence || "メモはありません。" %>
-          </p>
-        </div>
-      </div>
-
-      <%# サブ画像（2枚目以降） %>
-      <% if @item.item_images.count > 1 %>
-        <div class="mt-8">
-          <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 ml-1">その他の画像</h3>
-          <div class="grid grid-cols-2 gap-4">
-            <% @item.item_images.offset(1).each do |item_image| %>
-              <div class="aspect-square rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                <%= image_tag item_image.image, class: "w-full h-full object-cover" %>
-              </div>
-            <% end %>
+        <div class="bg-white rounded-2xl border border-base-border shadow-sm overflow-hidden min-h-[120px] flex flex-col">
+          <div class="px-6 py-6 flex-grow">
+            <p class="text-primary text-base leading-relaxed whitespace-pre-line font-medium tracking-tight">
+              <%= @item.memo.presence || "メモはありません。" %>
+            </p>
+          </div>
+          <div class="px-6 pb-4 flex justify-end">
+            <span class="text-[10px] text-base-text opacity-60 font-mono tracking-tighter italic">
+              <%= @item.updated_at.strftime("%Y.%m.%d %H:%M") %>
+            </span>
           </div>
         </div>
-      <% end %>
-
-      <%# 登録日時 %>
-      <div class="mt-10 pt-6 border-t border-gray-50 text-right">
-        <p class="text-[10px] text-gray-300 font-bold">
-          登録日時 : <%= @item.created_at.strftime("%Y/%m/%d") %>
-        </p>
-      </div>
+      </section>
     </div>
   </main>
 
-  <%# ナビゲーション（固定） %>
-  <nav class="fixed bottom-0 left-0 right-0 z-20 flex w-full items-center justify-between border-t border-gray-100 bg-white/95 px-8 pb-6 pt-3 backdrop-blur-md">
-    <%= link_to items_path, class: "flex flex-col items-center gap-1 text-gray-400" do %>
-      <i class="bi bi-house text-2xl"></i>
-      <span class="text-[10px] font-bold">ライブラリ</span>
-    <% end %>
-    <%= link_to new_item_path, class: "relative -top-6" do %>
-      <div class="flex h-14 w-14 items-center justify-center rounded-full bg-lime-400 shadow-lg shadow-lime-400/40 ring-4 ring-white active:scale-95 transition-transform">
-        <i class="bi bi-plus text-3xl text-primary"></i>
+  <%# --- 4. 削除モーダル --- %>
+  <div id="delete-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-6 transition-all">
+    <div class="absolute inset-0 bg-primary/40 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
+    <div class="relative bg-white w-full max-w-xs rounded-[32px] overflow-hidden shadow-2xl">
+      <div class="pt-10 pb-6 px-6 text-center">
+        <div class="w-14 h-14 bg-danger-light text-danger rounded-full flex items-center justify-center mx-auto mb-5">
+          <i class="bi bi-trash-fill text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-black text-primary mb-3">説明書を削除しますか？</h3>
+        <p class="text-[12px] text-base-text leading-relaxed font-bold opacity-60 px-2">削除したデータは元に戻せません。<br>このアイテムは完全に削除されます。</p>
       </div>
-    <% end %>
-    <a href="#" class="flex flex-col items-center gap-1 text-gray-400">
-      <i class="bi bi-gear text-2xl"></i>
-      <span class="text-[10px] font-bold">設定</span>
-    </a>
-  </nav>
+      <div class="flex border-t border-base-border h-16">
+        <button onclick="closeDeleteModal()" class="flex-1 text-primary text-sm font-black hover:bg-base-bg transition-colors border-r border-base-border">キャンセル</button>
+        <%= button_to item_path(@item), method: :delete, form_class: "flex-1 h-full", class: "w-full h-full text-white bg-primary text-sm font-black flex items-center justify-center" do %>
+          削除
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# --- 5. 拡大モーダル --- %>
+  <div class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-xl transition-all overflow-hidden"
+        data-image-modal-target="modal">
+    <div class="absolute inset-0 w-full h-full flex items-center justify-center p-4 z-[205]" data-action="click->image-modal#close">
+      <img class="max-w-full max-h-full object-contain shadow-2xl animate-in zoom-in-95 duration-200 pointer-events-auto" 
+            data-image-modal-target="modalImage">
+    </div>
+    <button class="absolute top-8 right-8 text-white text-3xl z-[210] flex items-center justify-center w-12 h-12 rounded-full bg-black/40 backdrop-blur-md active:scale-90 transition-all border border-white/20"
+            data-action="click->image-modal#close">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
 </div>
+
+<script>
+  function openDeleteModal() {
+    document.getElementById('delete-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDeleteModal() {
+    document.getElementById('delete-modal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  }
+</script>

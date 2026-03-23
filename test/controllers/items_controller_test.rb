@@ -29,11 +29,6 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
         }
       }
     end
-
-    # 修正ポイント：
-    # 現在の items#create は一覧へリダイレクトせず、
-    # そのまま 'create' ビューをレンダリング（おつかれさま画面）しているため
-    # assert_redirected_to ではなく :success を期待します。
-    assert_response :success
+    assert_redirected_to item_url(Item.last)
   end
 end
