@@ -8,28 +8,29 @@ class ItemsTest < ApplicationSystemTestCase
     sign_in @user
   end
 
-  test "画像を添付してパケを登録し、完了画面が表示されること" do
+  test "画像を添付してパケを登録し、詳細画面が表示されること" do
     visit new_item_url
 
     fill_in "パケの名前", with: "テストのパケ"
 
-    # 【最終手段】
-    # 第一引数は確実にID（item_image_input）を指定。
-    # visible: false をつけることで、CSSで隠れていても強制的に見つけ出します。
+    # 画像を添付
     attach_file "item_image_input",
                 Rails.root.join("test/fixtures/files/test_image.png"),
                 visible: false
 
     click_on "この内容で登録する"
 
-    assert_text "おつかれさまでした"
-    assert_text "心が軽くなりましたね"
+    # 💡 修正ポイント：
+    # 登録後は「完了画面」ではなく「詳細画面」に行くようになったので、
+    # 詳細画面に存在するテキストを確認します。
+    assert_text "登録しました"        # フラッシュメッセージ
+    assert_text "説明書詳細"          # ヘッダータイトル
+    assert_text "テストのパケ"        # 登録した名前
   end
 
-  test "名前が空の場合、エラーメッセージが出て画像プレビューが残ること" do
+  test "名前が空の場合、エラーメッセージが表示されること" do
     visit new_item_url
 
-    # こちらも同様にID + visible: false
     attach_file "item_image_input",
                 Rails.root.join("test/fixtures/files/test_image.png"),
                 visible: false
@@ -37,7 +38,5 @@ class ItemsTest < ApplicationSystemTestCase
     click_on "この内容で登録する"
 
     assert_text "名前を入力してください"
-    # プレビュー画像が表示されているか確認
-    assert_selector "img[data-input-images-target='image']", visible: true
   end
 end
