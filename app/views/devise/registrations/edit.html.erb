@@ -1,88 +1,79 @@
-<div class="max-w-md mx-auto mt-10 px-6 py-8 bg-white shadow-xl rounded-2xl border border-base-border">
-  <h2 class="text-2xl font-bold text-center text-primary mb-8">プロフィール編集</h2>
+<div class="min-h-screen bg-white pb-32">
+  <%# --- 1. Sharedヘッダー呼び出し（戻る先はライブラリ） --- %>
+  <%= render 'shared/header', title: "プロフィール編集", back_path: items_path %>
 
-  <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-    <%= render "devise/shared/error_messages", resource: resource %>
+  <div class="px-6 py-8 max-w-md mx-auto">
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
 
-    <%# お名前（Name） %>
-    <div class="mb-5">
-      <%= f.label :name, "お名前", class: "block text-sm font-bold text-base-text mb-2" %>
-      <%= f.text_field :name, autofocus: true, placeholder: "ログイン時に表示されます", 
-          class: "w-full px-4 py-3 rounded-xl border border-base-border focus:ring-2 focus:ring-accent focus:border-transparent outline-none transition-all bg-base-bg" %>
-    </div>
+      <%# お名前 %>
+      <div class="mb-6">
+        <%= f.label :name, "お名前", class: "block text-sm font-bold text-primary mb-2 ml-1" %>
+        <%= f.text_field :name, autofocus: true, 
+            class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold" %>
+      </div>
 
-    <%# メールアドレス（編集不可・グレーアウト） %>
-    <div class="mb-5">
-      <%= f.label :email, "メールアドレス", class: "block text-sm font-bold text-gray-400 mb-2" %>
-      <%= f.email_field :email, 
-          readonly: true, 
-          class: "w-full px-4 py-3 rounded-xl border border-base-border bg-gray-100 text-gray-500 cursor-not-allowed outline-none" %>
-      <p class="text-[10px] text-gray-400 mt-1">※メールアドレスの変更は現在対応しておりません</p>
-    </div>
+      <%# メールアドレス（読み取り専用） %>
+      <div class="mb-8">
+        <%= f.label :email, "メールアドレス", class: "block text-sm font-bold text-gray-400 mb-2 ml-1" %>
+        <%= f.email_field :email, readonly: true, 
+            class: "w-full px-5 py-4 border-none rounded-2xl bg-gray-100 text-gray-400 text-base cursor-not-allowed font-bold" %>
+        <p class="text-[10px] text-gray-400 mt-2 ml-1 font-bold">※メールアドレスの変更は現在対応しておりません</p>
+      </div>
 
-    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-      <div class="mb-5 text-sm text-amber-600 italic">
-        現在、次のアドレスの確認待ちです: <%= resource.unconfirmed_email %>
+      <hr class="my-10 border-base-border">
+
+      <%# 新しいパスワード %>
+      <div class="mb-6" data-controller="password-visibility">
+        <%= f.label :password, "新しいパスワード", class: "block text-sm font-bold text-primary mb-1 ml-1" %>
+        <span class="text-[10px] text-base-text font-bold opacity-60 mb-2 block ml-1">※変更しない場合は空欄のままにしてください</span>
+        <div class="relative flex items-center">
+          <%= f.password_field :password, autocomplete: "new-password", 
+              data: { password_visibility_target: "input" },
+              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14" %>
+          <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary cursor-pointer">
+            <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
+          </button>
+        </div>
+      </div>
+
+      <%# パスワード確認用 %>
+      <div class="mb-10" data-controller="password-visibility">
+        <%= f.label :password_confirmation, "確認用パスワード", class: "block text-sm font-bold text-primary mb-2 ml-1" %>
+        <div class="relative flex items-center">
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", 
+              data: { password_visibility_target: "input" },
+              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14" %>
+          <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary cursor-pointer">
+            <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
+          </button>
+        </div>
+      </div>
+
+      <%# 現在のパスワード（重要） %>
+      <div class="mb-10 p-6 bg-rose-50 rounded-3xl border border-rose-100" data-controller="password-visibility">
+        <%= f.label :current_password, "現在のパスワード", class: "block text-sm font-bold text-rose-800 mb-2 ml-1" %>
+        <div class="relative flex items-center">
+          <%= f.password_field :current_password, autocomplete: "current-password", 
+              data: { password_visibility_target: "input" },
+              class: "w-full px-5 py-4 border-none rounded-2xl bg-white text-primary text-base focus:ring-2 focus:ring-rose-500 shadow-sm font-bold pr-14" %>
+          <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-rose-300 focus:outline-none hover:text-rose-500 cursor-pointer">
+            <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
+          </button>
+        </div>
+        <p class="text-[10px] text-rose-700/60 mt-3 ml-1 font-bold">設定変更には現在のパスワード入力が必要です</p>
+      </div>
+
+      <div class="mb-12">
+        <%= f.submit "変更を保存する", class: "w-full bg-primary text-white font-black py-5 rounded-full text-lg shadow-lg active:translate-y-0.5 transition-all tracking-widest cursor-pointer" %>
       </div>
     <% end %>
 
-    <hr class="my-8 border-base-border">
-
-    <%# 新しいパスワード %>
-    <div class="mb-5" data-controller="password-visibility">
-      <%= f.label :password, "新しいパスワード", class: "block text-sm font-bold text-base-text mb-1" %>
-      <span class="text-xs text-gray-500 mb-2 block">※変更しない場合は空欄のままにしてください</span>
-      <div class="relative flex items-center">
-        <%= f.password_field :password, autocomplete: "new-password", 
-            data: { password_visibility_target: "input" },
-            class: "w-full px-4 py-3 rounded-xl border border-base-border focus:ring-2 focus:ring-accent focus:border-transparent outline-none transition-all bg-base-bg pr-12" %>
-        <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary cursor-pointer">
-          <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
-        </button>
-      </div>
+    <div class="pt-8 border-t border-base-border text-center">
+      <%= button_to "アカウントを完全に削除する", registration_path(resource_name), 
+          data: { confirm: "本当に削除しますか？", turbo_confirm: "本当に削除しますか？" }, 
+          method: :delete, 
+          class: "text-sm text-rose-500 font-bold hover:underline" %>
     </div>
-
-    <%# パスワード（確認用） %>
-    <div class="mb-5" data-controller="password-visibility">
-      <%= f.label :password_confirmation, "新しいパスワード（確認用）", class: "block text-sm font-bold text-base-text mb-2" %>
-      <div class="relative flex items-center">
-        <%= f.password_field :password_confirmation, autocomplete: "new-password", 
-            data: { password_visibility_target: "input" },
-            class: "w-full px-4 py-3 rounded-xl border border-base-border focus:ring-2 focus:ring-accent focus:border-transparent outline-none transition-all bg-base-bg pr-12" %>
-        <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary cursor-pointer">
-          <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
-        </button>
-      </div>
-    </div>
-
-    <hr class="my-8 border-base-border">
-
-    <%# 現在のパスワード（更新に必須） %>
-    <div class="mb-8 p-4 bg-rose-50 rounded-xl border border-rose-100" data-controller="password-visibility">
-      <%= f.label :current_password, "現在のパスワード", class: "block text-sm font-bold text-rose-800 mb-2" %>
-      <div class="relative flex items-center">
-        <%= f.password_field :current_password, autocomplete: "current-password", 
-            data: { password_visibility_target: "input" },
-            class: "w-full px-4 py-3 rounded-xl border border-rose-200 focus:ring-2 focus:ring-rose-500 focus:border-transparent outline-none transition-all bg-white pr-12" %>
-        <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-rose-400 focus:outline-none hover:text-rose-600 cursor-pointer">
-          <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
-        </button>
-      </div>
-    </div>
-
-    <div class="mb-6">
-      <%= f.submit "変更を保存する", class: "w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg hover:opacity-90 transition-opacity cursor-pointer" %>
-    </div>
-  <% end %>
-
-  <div class="mt-10 pt-8 border-t border-base-border text-center">
-    <%= button_to "アカウントを削除する", registration_path(resource_name), 
-        data: { confirm: "本当に削除しますか？", turbo_confirm: "本当に削除しますか？" }, 
-        method: :delete, 
-        class: "text-sm text-rose-500 hover:underline font-medium" %>
-  </div>
-
-  <div class="mt-4 text-center">
-    <%= link_to "戻る", :back, class: "text-sm text-gray-500 hover:text-primary" %>
   </div>
 </div>

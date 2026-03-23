@@ -11,5 +11,8 @@ module PakeLog
 
     # デフォルトの言語を日本語に設定
     config.i18n.default_locale = :ja
+
+    # Cloudinaryが提供する加工パラメータをActive Storageがそのまま通すようにする
+    config.active_storage.track_variants = true
   end
 end
