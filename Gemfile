@@ -17,7 +17,7 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 # Tailwind CSS v3系を安定して利用するためにバージョンを固定
-gem "tailwindcss-rails", "2.6.1"
+gem "tailwindcss-rails", "4.4.0"
 
 # Use Active Model has_secure_password
 gem "bcrypt", "~> 3.1.7"
