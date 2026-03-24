@@ -12,14 +12,14 @@
       <div class="mb-5">
         <%= f.label :name, "お名前", class: "block text-sm font-bold text-primary mb-2 ml-1" %>
         <%= f.text_field :name, autofocus: true, placeholder: "例：パケ太郎", 
-            class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold" %>
+            class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold outline-none" %>
       </div>
 
       <%# メールアドレス %>
       <div class="mb-5">
         <%= f.label :email, "メールアドレス", class: "block text-sm font-bold text-primary mb-2 ml-1" %>
         <%= f.email_field :email, autocomplete: "email", placeholder: "example@pakelog.com",
-            class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold" %>
+            class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold outline-none" %>
       </div>
 
       <%# パスワード %>
@@ -28,24 +28,38 @@
         <div class="relative flex items-center">
           <%= f.password_field :password, autocomplete: "new-password", 
               data: { password_visibility_target: "input" },
-              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14" %>
-          <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary cursor-pointer">
+              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14 outline-none" %>
+          <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary transition-colors cursor-pointer">
             <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
           </button>
         </div>
       </div>
 
       <%# パスワード確認用 %>
-      <div class="mb-10" data-controller="password-visibility">
+      <div class="mb-8" data-controller="password-visibility">
         <%= f.label :password_confirmation, "パスワード（確認用）", class: "block text-sm font-bold text-primary mb-2 ml-1" %>
         <div class="relative flex items-center">
           <%= f.password_field :password_confirmation, autocomplete: "new-password", 
               data: { password_visibility_target: "input" },
-              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14" %>
-          <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary cursor-pointer">
+              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14 outline-none" %>
+          <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary transition-colors cursor-pointer">
             <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
           </button>
         </div>
+      </div>
+
+      <%# 🌟 利用規約：text-xsに統一して改行を防止 %>
+      <div class="mb-10 flex justify-center">
+        <label class="flex items-start cursor-pointer group max-w-sm">
+          <%= check_box_tag :agreement, "1", false, required: true, 
+              class: "appearance-none w-5 h-5 mt-0.5 flex-shrink-0 rounded-lg bg-base-bg checked:bg-accent border-none shadow-inner cursor-pointer transition-all duration-200 relative
+                      after:content-[''] after:absolute after:hidden checked:after:block after:left-[7px] after:top-[3px] after:w-[5px] after:h-[10px] after:border-white after:border-r-2 after:border-b-2 after:rotate-45" %>
+          
+          <span class="ml-3 text-xs text-base-text font-bold opacity-70 group-hover:opacity-100 transition-opacity leading-relaxed">
+            <%= link_to "利用規約", terms_path, class: "text-primary !underline decoration-2 underline-offset-4 hover:opacity-80 transition-all" %>と
+            <%= link_to "プライバシーポリシー", privacy_path, class: "text-primary !underline decoration-2 underline-offset-4 hover:opacity-80 transition-all" %>に同意する
+          </span>
+        </label>
       </div>
 
       <div class="mb-8">
@@ -53,7 +67,7 @@
       </div>
     <% end %>
 
-    <div class="text-center space-y-4">
+    <div class="text-center">
       <%= render "devise/shared/links" %>
     </div>
   </div>

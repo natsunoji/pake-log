@@ -1,0 +1,33 @@
+<%# ヘッダー：設定画面に戻れるように指定 %>
+<%= render 'shared/header', title: "お問い合わせ", back_path: settings_path %>
+
+<main class="min-h-screen bg-base-bg pt-4 pb-24">
+  <div class="max-w-2xl mx-auto h-full">
+    
+    <%# 🌟 Googleフォームを包むカード %>
+    <div class="bg-white rounded-[32px] overflow-hidden shadow-sm border border-primary/5 flex flex-col" style="height: calc(100vh - 160px);">
+      
+      <%# 🌟 1. 自前のヘッダー画像を入れる %>
+      <div class="w-full">
+        <%= image_tag 'contact_header.png', class: "w-full h-auto object-cover", alt: "PakeLog お問い合わせヘッダー" %>
+      </div>
+      
+      <iframe 
+        src="https://docs.google.com/forms/d/e/1FAIpQLScYoHcUL1x1exSpvk9C5tGwqa6_J3mJcvmK01qEqFGmGn9XhA/viewform?embedded=true" 
+        width="100%" 
+        height="100%" 
+        frameborder="0" 
+        marginheight="0" 
+        marginwidth="0"
+        class="flex-grow">
+        読み込み中…
+      </iframe>
+      
+    </div>
+
+    <p class="text-center text-[10px] text-base-text opacity-40 mt-6 px-6 font-bold leading-relaxed">
+      ※ご入力いただいた内容は運営へ届きます。<br>
+      不具合報告や改善要望など、お気軽にお寄せください！
+    </p>
+  </div>
+</main>

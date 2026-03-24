@@ -1,0 +1,39 @@
+<div id="delete-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-6 transition-all">
+  <%# 背景のぼかし：primary（ネイビー）の40%透過 %>
+  <div class="absolute inset-0 bg-primary/40 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
+  
+  <div class="relative bg-white w-full max-w-xs rounded-[32px] overflow-hidden shadow-2xl">
+    <div class="pt-10 pb-6 px-6 text-center">
+      <%# 🌟 修正：rose-50 -> danger-light, text-rose-500 -> text-danger, border-rose-100 -> border-danger/10 %>
+      <div class="w-14 h-14 bg-danger-light text-danger rounded-full flex items-center justify-center mx-auto mb-5 border border-danger/10">
+        <i class="bi bi-trash-fill text-2xl"></i>
+      </div>
+      <h3 class="text-xl font-black text-primary mb-3">アイテムを削除？</h3>
+      <p class="text-[12px] text-base-text leading-relaxed font-bold opacity-60 px-2">
+        削除したデータは元に戻せません。<br>このアイテムは完全に削除されます。
+      </p>
+    </div>
+    
+    <div class="flex border-t border-base-border h-16">
+      <button onclick="closeDeleteModal()" class="flex-1 text-primary text-sm font-black hover:bg-base-bg transition-colors border-r border-base-border">
+        キャンセル
+      </button>
+      <%# 🌟 修正：bg-rose-500 -> bg-danger %>
+      <%= button_to item_path(item), method: :delete, form_class: "flex-1 h-full", 
+          class: "w-full h-full text-white bg-danger text-sm font-black flex items-center justify-center active:opacity-90 transition-opacity" do %>
+        削除
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openDeleteModal() {
+    document.getElementById('delete-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDeleteModal() {
+    document.getElementById('delete-modal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  }
+</script>

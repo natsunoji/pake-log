@@ -1,25 +1,39 @@
-<h2>Change your password</h2>
+<div class="min-h-screen bg-white px-6 py-12">
+  <div class="max-w-md mx-auto">
+    <div class="text-center mb-10">
+      <h2 class="text-2xl font-black text-primary mb-2">新しいパスワードの設定</h2>
+      <p class="text-sm text-base-text font-bold opacity-60">
+        新しいパスワードを入力してください。
+      </p>
+    </div>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <%= f.hidden_field :reset_password_token %>
 
-  <div class="field">
-    <p><%= f.label :password, "New password" %></p>
-    <% if @minimum_password_length %>
-      <p><em>(<%= @minimum_password_length %> characters minimum)</em></p>
+      <div class="space-y-6 mb-10">
+        <div>
+          <%= f.label :password, "新しいパスワード", class: "text-sm font-bold text-primary block mb-2 ml-1" %>
+          <% if @minimum_password_length %>
+            <span class="text-xs text-base-text opacity-50 block mb-2 ml-1">（<%= @minimum_password_length %>文字以上）</span>
+          <% end %>
+          <%= f.password_field :password, autofocus: true, autocomplete: "new-password", 
+              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold" %>
+        </div>
+
+        <div>
+          <%= f.label :password_confirmation, "新しいパスワード（確認用）", class: "text-sm font-bold text-primary block mb-2 ml-1" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", 
+              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold" %>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <%= f.submit "パスワードを変更する", 
+            class: "w-full bg-primary text-white font-black py-5 rounded-full text-lg shadow-lg active:translate-y-0.5 transition-all tracking-widest" %>
+        
+        <%= render "devise/shared/links" %>
+      </div>
     <% end %>
-    <p><%= f.password_field :password, autofocus: true, autocomplete: "new-password" %></p>
   </div>
-
-  <div class="field">
-    <p><%= f.label :password_confirmation, "Confirm new password" %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Change my password" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

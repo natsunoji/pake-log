@@ -1,0 +1,44 @@
+<div id="delete-account-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-6 transition-all">
+  <%# 背景のぼかし：primary（ネイビー）を透過 %>
+  <div class="absolute inset-0 bg-primary/40 backdrop-blur-sm" onclick="closeDeleteAccountModal()"></div>
+  
+  <div class="relative bg-white w-full max-w-xs rounded-[32px] overflow-hidden shadow-2xl">
+    <div class="pt-10 pb-6 px-6 text-center">
+      <%# 🌟 アイコン：設定ファイル通りの danger.light と danger を使用 %>
+      <div class="w-14 h-14 bg-danger-light text-danger rounded-full flex items-center justify-center mx-auto mb-5 border border-danger/10">
+        <i class="bi bi-trash3-fill text-2xl"></i>
+      </div>
+      <h3 class="text-xl font-black text-primary mb-3">アカウントを削除？</h3>
+      <p class="text-[12px] text-base-text leading-relaxed font-bold opacity-60 px-2">
+        一度削除したデータは復元できません。<br>本当によろしいですか？
+      </p>
+    </div>
+    
+    <div class="flex border-t border-base-border h-16">
+      <button onclick="closeDeleteAccountModal()" class="flex-1 text-primary text-sm font-black hover:bg-base-bg transition-colors border-r border-base-border">
+        キャンセル
+      </button>
+      <%# 🌟 実行ボタン：設定ファイル通りの bg-danger を使用 %>
+      <button onclick="submitDeleteAccountForm()" class="flex-1 h-full text-white bg-danger text-sm font-black flex items-center justify-center active:opacity-90 transition-opacity">
+        削除する
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openDeleteAccountModal() {
+    document.getElementById('delete-account-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDeleteAccountModal() {
+    document.getElementById('delete-account-modal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  }
+  function submitDeleteAccountForm() {
+    const form = document.getElementById('delete-account-form');
+    if (form) {
+      form.submit();
+    }
+  }
+</script>
