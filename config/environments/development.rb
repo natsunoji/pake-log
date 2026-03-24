@@ -7,7 +7,6 @@ Rails.application.configure do
   # PC内での画像加工（Vips/ImageMagick）を完全にオフにする。
   config.active_storage.variant_processor = nil
 
-
   config.enable_reloading = true
   config.eager_load = false
   config.consider_all_requests_local = true
@@ -23,10 +22,19 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
+  # --- メールの設定 ---
+  # 🌟 配送エラーを無視するか（開発中は一旦 false）
   config.action_mailer.raise_delivery_errors = false
   config.action_mailer.perform_caching = false
+
+  # 🌟 letter_opener を使用してブラウザでメールを表示する設定
+  config.action_mailer.delivery_method = :letter_opener
+  config.action_mailer.perform_deliveries = true
+
+  # 🌟 メール内のリンクで使用するURL（開発環境用）
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
+  # --- その他の設定 ---
   config.active_support.deprecation = :log
   config.active_support.disallowed_deprecation = :raise
   config.active_support.disallowed_deprecation_warnings = []

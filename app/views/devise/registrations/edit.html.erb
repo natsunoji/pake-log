@@ -1,36 +1,60 @@
 <div class="min-h-screen bg-white pb-32">
-  <%# --- 1. Sharedヘッダー呼び出し（戻る先はライブラリ） --- %>
-  <%= render 'shared/header', title: "プロフィール編集", back_path: items_path %>
+  <%# --- 1. ヘッダー --- %>
+  <%= render 'shared/header', title: "プロフィール編集", back_path: settings_path %>
 
   <div class="px-6 py-8 max-w-md mx-auto">
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
-      <%= render "devise/shared/error_messages", resource: resource %>
+      
+      <%# 🌟 修正ポイント：エラー表示をここに直接記述 %>
+      <% if resource.errors.any? %>
+        <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-r-xl shadow-sm">
+          <div class="flex items-center mb-1">
+            <i class="bi bi-exclamation-circle-fill text-red-400 mr-2"></i>
+            <h3 class="text-sm font-bold text-red-800 italic">入力内容を確認してください</h3>
+          </div>
+          <ul class="list-disc list-inside text-[10px] text-red-700 font-bold space-y-0.5 ml-1">
+            <% resource.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
 
       <%# お名前 %>
       <div class="mb-6">
         <%= f.label :name, "お名前", class: "block text-sm font-bold text-primary mb-2 ml-1" %>
         <%= f.text_field :name, autofocus: true, 
-            class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold" %>
+            class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold outline-none" %>
       </div>
 
-      <%# メールアドレス（読み取り専用） %>
+      <%# メールアドレス %>
       <div class="mb-8">
         <%= f.label :email, "メールアドレス", class: "block text-sm font-bold text-gray-400 mb-2 ml-1" %>
         <%= f.email_field :email, readonly: true, 
-            class: "w-full px-5 py-4 border-none rounded-2xl bg-gray-100 text-gray-400 text-base cursor-not-allowed font-bold" %>
+            class: "w-full px-5 py-4 border-none rounded-2xl bg-gray-100 text-gray-400 text-base cursor-not-allowed font-bold outline-none" %>
         <p class="text-[10px] text-gray-400 mt-2 ml-1 font-bold">※メールアドレスの変更は現在対応しておりません</p>
       </div>
 
-      <hr class="my-10 border-base-border">
+      <hr class="my-10 border-primary/5">
+
+      <%# 現在のパスワード %>
+      <div class="mb-10">
+        <%= f.label :current_password, "現在のパスワード", class: "block text-sm font-bold text-primary mb-1 ml-1" %>
+        <span class="text-[10px] text-base-text font-bold opacity-40 mb-3 block ml-1">※変更を保存するには入力が必要です</span>
+        <%= f.password_field :current_password, autocomplete: "current-password", placeholder: "••••••••",
+            class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold outline-none placeholder:text-gray-400/80 placeholder:font-medium" %>
+      </div>
+
+      <hr class="my-10 border-primary/5">
 
       <%# 新しいパスワード %>
       <div class="mb-6" data-controller="password-visibility">
         <%= f.label :password, "新しいパスワード", class: "block text-sm font-bold text-primary mb-1 ml-1" %>
-        <span class="text-[10px] text-base-text font-bold opacity-60 mb-2 block ml-1">※変更しない場合は空欄のままにしてください</span>
+        <span class="text-[10px] text-base-text font-bold opacity-40 mb-2 block ml-1">※変更する場合のみ入力してください</span>
         <div class="relative flex items-center">
-          <%= f.password_field :password, autocomplete: "new-password", 
+          <%= f.password_field :password, autocomplete: "new-password", placeholder: "••••••••",
               data: { password_visibility_target: "input" },
-              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14" %>
+              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14 outline-none placeholder:text-gray-400/80 placeholder:font-medium" %>
           <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary cursor-pointer">
             <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
           </button>
@@ -41,27 +65,13 @@
       <div class="mb-10" data-controller="password-visibility">
         <%= f.label :password_confirmation, "確認用パスワード", class: "block text-sm font-bold text-primary mb-2 ml-1" %>
         <div class="relative flex items-center">
-          <%= f.password_field :password_confirmation, autocomplete: "new-password", 
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "••••••••",
               data: { password_visibility_target: "input" },
-              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14" %>
+              class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14 outline-none placeholder:text-gray-400/80 placeholder:font-medium" %>
           <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary cursor-pointer">
             <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
           </button>
         </div>
-      </div>
-
-      <%# 現在のパスワード（重要） %>
-      <div class="mb-10 p-6 bg-rose-50 rounded-3xl border border-rose-100" data-controller="password-visibility">
-        <%= f.label :current_password, "現在のパスワード", class: "block text-sm font-bold text-rose-800 mb-2 ml-1" %>
-        <div class="relative flex items-center">
-          <%= f.password_field :current_password, autocomplete: "current-password", 
-              data: { password_visibility_target: "input" },
-              class: "w-full px-5 py-4 border-none rounded-2xl bg-white text-primary text-base focus:ring-2 focus:ring-rose-500 shadow-sm font-bold pr-14" %>
-          <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-rose-300 focus:outline-none hover:text-rose-500 cursor-pointer">
-            <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
-          </button>
-        </div>
-        <p class="text-[10px] text-rose-700/60 mt-3 ml-1 font-bold">設定変更には現在のパスワード入力が必要です</p>
       </div>
 
       <div class="mb-12">
@@ -69,11 +79,22 @@
       </div>
     <% end %>
 
-    <div class="pt-8 border-t border-base-border text-center">
-      <%= button_to "アカウントを完全に削除する", registration_path(resource_name), 
-          data: { confirm: "本当に削除しますか？", turbo_confirm: "本当に削除しますか？" }, 
-          method: :delete, 
-          class: "text-sm text-rose-500 font-bold hover:underline" %>
+    <%# --- アカウント削除セクション --- %>
+    <div class="pt-8 border-t border-primary/5">
+      <p class="text-[10px] text-primary/30 font-black uppercase tracking-[0.2em] px-4 mb-4 text-center">Danger Zone</p>
+      <button onclick="openDeleteAccountModal()" class="w-full group flex items-center justify-between p-5 bg-danger-light rounded-3xl border border-danger/10 active:scale-[0.98] transition-all cursor-pointer">
+        <div class="flex items-center gap-4">
+          <div class="flex items-center justify-center w-11 h-11 rounded-2xl bg-danger-light text-danger">
+            <i class="bi bi-trash3-fill text-xl"></i>
+          </div>
+          <span class="font-bold text-base text-danger">アカウントを削除する</span>
+        </div>
+        <i class="bi bi-chevron-right text-danger/30 group-hover:text-danger transition-colors"></i>
+      </button>
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :delete, id: "delete-account-form", class: "hidden" }) do |f| %>
+      <% end %>
     </div>
   </div>
 </div>
+
+<%= render "shared/delete_account_modal" %>
