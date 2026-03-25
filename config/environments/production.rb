@@ -20,8 +20,8 @@ Rails.application.configure do
   # key such as config/credentials/production.key. This key is used to decrypt credentials (and other encrypted files).
   # config.require_master_key = true
 
-  # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
-  # config.public_file_server.enabled = false
+  # 🌟 修正ポイント：Rails自体に静的ファイル（画像・CSS等）の配信を許可する
+  config.public_file_server.enabled = true
 
   # Compress CSS using a preprocessor.
   # config.assets.css_compressor = :sass
@@ -87,6 +87,7 @@ Rails.application.configure do
   config.i18n.fallbacks = true
 
   # Don't log any deprecations.
+  config.assets.quiet = true # 追加しておくとログがスッキリします
   config.active_support.report_deprecations = false
 
   # Do not dump schema after migrations.
