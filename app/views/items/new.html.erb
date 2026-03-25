@@ -65,12 +65,16 @@
               <div class="relative aspect-square rounded-2xl overflow-hidden border-2 border-dashed border-base-border bg-base-bg flex items-center justify-center text-gray-300" 
                   data-input-images-target="previewBox">
                 <img class="hidden absolute inset-0 w-full h-full object-cover" data-input-images-target="image">
+                
+                <%# 🌟 修正ポイント：data-input-images-target="removeButton" を追加 %>
                 <button type="button" 
                         class="hidden absolute top-1 right-1 h-6 w-6 rounded-full bg-danger text-white flex items-center justify-center shadow-md z-10"
                         data-action="click->input-images#remove"
+                        data-input-images-target="removeButton"
                         data-index="<%= index %>">
                   <i class="bi bi-x text-lg"></i>
                 </button>
+
                 <i class="bi bi-image text-2xl" data-input-images-target="placeholderIcon"></i>
                 <% if index == 0 %>
                   <div class="hidden absolute bottom-0 left-0 right-0 bg-primary/70 backdrop-blur-[2px] py-1 text-center" data-input-images-target="coverLabel">
