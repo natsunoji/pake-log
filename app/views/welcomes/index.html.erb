@@ -6,7 +6,7 @@
     <%# 2. トップ %>
     <section class="py-12 px-6 text-center">
       <div class="mb-6 flex justify-center">
-        <%#  Rails.application.assets が存在する場合のみ実行するようにガードを追加 %>
+        <%# 🌟ガードを追加：ロゴ部分 %>
         <% if Rails.application.assets && Rails.application.assets.find_asset('Pakelog_logo2.svg') %>
           <%= image_tag 'Pakelog_logo2.svg', class: 'h-16 w-auto', alt: 'PakeLog' %>
         <% else %>
@@ -47,7 +47,8 @@
             <h3 class="font-black text-lg">写真を撮る</h3>
           </div>
           <div class="aspect-video bg-white rounded-2xl mb-4 overflow-hidden flex items-center justify-center">
-            <%= image_tag 'step1_take_photo.png', class: 'w-full h-full object-contain' if Rails.application.assets.find_asset('step1_take_photo.png') %>
+            <%# 🌟ガードを追加：STEP 1 %>
+            <%= image_tag 'step1_take_photo.png', class: 'w-full h-full object-contain' if Rails.application.assets && Rails.application.assets.find_asset('step1_take_photo.png') %>
           </div>
           <p class="text-sm font-bold text-gray-500 text-center">説明書の写真を撮影</p>
         </div>
@@ -59,7 +60,8 @@
             <h3 class="font-black text-lg">保存して情報を登録</h3>
           </div>
           <div class="aspect-video bg-white rounded-2xl mb-4 overflow-hidden flex items-center justify-center">
-            <%= image_tag 'step2_save_data.png', class: 'w-full h-full object-contain' if Rails.application.assets.find_asset('step2_save_data.png') %>
+            <%# 🌟ガードを追加：STEP 2 %>
+            <%= image_tag 'step2_save_data.png', class: 'w-full h-full object-contain' if Rails.application.assets && Rails.application.assets.find_asset('step2_save_data.png') %>
           </div>
           <p class="text-sm font-bold text-gray-500 text-center">名前を付けて商品情報を登録</p>
         </div>
@@ -71,7 +73,8 @@
             <h3 class="font-black text-lg">実物を処分して断捨離！</h3>
           </div>
           <div class="aspect-video bg-white rounded-2xl mb-4 overflow-hidden flex items-center justify-center">
-            <%= image_tag 'step3_declutter.png', class: 'w-full h-full object-contain' if Rails.application.assets.find_asset('step3_declutter.png') %>
+            <%# 🌟ガードを追加：STEP 3 %>
+            <%= image_tag 'step3_declutter.png', class: 'w-full h-full object-contain' if Rails.application.assets && Rails.application.assets.find_asset('step3_declutter.png') %>
           </div>
           <p class="text-sm font-bold text-gray-500 text-center">実物を処分し、スッキリさせましょう！</p>
         </div>
