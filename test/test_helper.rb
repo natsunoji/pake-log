@@ -18,3 +18,22 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+# 💡 Cloudinary のモック化を追加
+module CloudinaryTestHelper
+  def stub_cloudinary_upload
+    Cloudinary::Uploader.stub :upload, {
+      'public_id' => 'test_image',
+      'version' => 1234567890,
+      'url' => 'http://res.cloudinary.com/test_cloud/image/upload/v1234567890/test_image.jpg',
+      'secure_url' => 'https://res.cloudinary.com/test_cloud/image/upload/v1234567890/test_image.jpg'
+    } do
+      yield
+    end
+  end
+end
+
+# 💡 システムテストで Cloudinary のモック化を有効にする
+class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+  include CloudinaryTestHelper
+end
