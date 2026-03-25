@@ -22,11 +22,14 @@ end
 # 💡 Cloudinary のモック化を追加
 module CloudinaryTestHelper
   def stub_cloudinary_upload
-    Cloudinary::Uploader.stub :upload, {
-      'public_id' => 'test_image',
-      'version' => 1234567890,
-      'url' => 'http://res.cloudinary.com/test_cloud/image/upload/v1234567890/test_image.jpg',
-      'secure_url' => 'https://res.cloudinary.com/test_cloud/image/upload/v1234567890/test_image.jpg'
+    # 💡 Minitest の stub メソッドを使う
+    Cloudinary::Uploader.stub :upload, lambda { |*args|
+      {
+        "public_id" => "test_image",
+        "version" => 1234567890,
+        "url" => "http://res.cloudinary.com/test_cloud/image/upload/v1234567890/test_image.jpg",
+        "secure_url" => "https://res.cloudinary.com/test_cloud/image/upload/v1234567890/test_image.jpg"
+      }
     } do
       yield
     end
