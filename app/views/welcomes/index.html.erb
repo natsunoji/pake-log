@@ -3,10 +3,11 @@
   <%= render 'shared/header' %>
 
   <main class="flex-grow pt-16">
-    <%# 2. ヒーローセクション %>
+    <%# 2. トップ %>
     <section class="py-12 px-6 text-center">
       <div class="mb-6 flex justify-center">
-        <% if Rails.application.assets.find_asset('Pakelog_logo2.svg') %>
+        <%#  Rails.application.assets が存在する場合のみ実行するようにガードを追加 %>
+        <% if Rails.application.assets && Rails.application.assets.find_asset('Pakelog_logo2.svg') %>
           <%= image_tag 'Pakelog_logo2.svg', class: 'h-16 w-auto', alt: 'PakeLog' %>
         <% else %>
           <div class="flex flex-col items-center gap-2">
@@ -77,7 +78,7 @@
       </div>
     </section>
 
-    <%# 5. ホーム画面に追加の案内 %>
+    <%# 5. iPhone向け ホーム画面に追加の案内 %>
     <section class="py-12 px-6 bg-white text-center">
       <div class="max-w-sm mx-auto p-8 bg-[#8CC134]/10 rounded-[2.5rem] border border-[#8CC134]/20 shadow-inner">
         <div class="flex items-center justify-center gap-3 mb-6 text-[#11243B]">
