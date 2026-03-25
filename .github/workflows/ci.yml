@@ -66,12 +66,6 @@ jobs:
           - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
 
-      # redis:
-      #   image: redis
-      #   ports:
-      #     - 6379:6379
-      #   options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install -y libvips
@@ -79,10 +73,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install JavaScript dependencies  # ← yarn install
+      - name: Install JavaScript dependencies
         run: yarn install --production=false
 
-      - name: Set up Ruby  # ← Ruby のセットアップ
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
@@ -91,10 +85,15 @@ jobs:
       - name: Build CSS 
         run: yarn run build:css
 
-      - name: Run tests  # ← テストの実行(Ruby が必要!)
+      - name: Run tests
         env:
           RAILS_ENV: test
           DATABASE_URL: postgres://postgres:postgres@localhost:5432
+          # 🌟 Cloudinary のダミー環境変数を追加
+          # テスト実行時にこれらが定義されていないと、詳細画面（show）の表示テストでエラーになる
+          CLOUDINARY_CLOUD_NAME: dummy_name
+          CLOUDINARY_API_KEY: 123456789
+          CLOUDINARY_API_SECRET: abcdefg
         run: bin/rails db:test:prepare test test:system
       
       - name: Keep screenshots from failed system tests

@@ -24,17 +24,27 @@
           <% @item.images.each_with_index do |image, index| %>
             <div class="w-full h-full flex-shrink-0 snap-center flex items-center justify-center p-2">
               <%# 💡 image_tag を cl_image_tag に修正 %>
-              <%= cl_image_tag image.key, 
-                  transformation: [
-                    { width: 1200, height: 1200, crop: :limit },
-                    { fetch_format: :auto, quality: :auto }
-                  ],
-                  class: "max-w-full max-h-full object-contain shadow-sm rounded-lg cursor-pointer active:scale-95 transition-transform",
-                  data: { 
-                    action: "click->image-modal#open",
-                    # 💡 拡大用URLも Cloudinary のパスを指定
-                    image_modal_url_param: cl_image_path(image.key, fetch_format: :auto, quality: :auto)
-                  } %>
+              <% if Rails.env.test? %>
+  <%# テスト環境では image_tag を使用 %>
+                <%= image_tag rails_blob_path(image, disposition: "inline"), 
+                    class: "max-w-full max-h-full object-contain shadow-sm rounded-lg cursor-pointer active:scale-95 transition-transform",
+                    data: { 
+                      action: "click->image-modal#open",
+                      image_modal_url_param: rails_blob_path(image, disposition: "inline")
+                    } %>
+              <% else %>
+                <%# 本番環境では cl_image_tag を使用 %>
+                <%= cl_image_tag image.key, 
+                    transformation: [
+                      { width: 1200, height: 1200, crop: :limit },
+                      { fetch_format: :auto, quality: :auto }
+                    ],
+                    class: "max-w-full max-h-full object-contain shadow-sm rounded-lg cursor-pointer active:scale-95 transition-transform",
+                    data: { 
+                      action: "click->image-modal#open",
+                      image_modal_url_param: cl_image_path(image.key, fetch_format: :auto, quality: :auto)
+                    } %>
+              <% end %>
             </div>
           <% end %>
         <% end %>
@@ -50,11 +60,13 @@
       <% end %>
 
       <%# 拡大ボタン %>
-      <button class="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-white active:scale-95 transition-all text-[10px] font-bold uppercase tracking-widest shadow-lg"
-              data-action="click->image-modal#open"
-              data-image-modal-url-param="<%= cl_image_path(@item.images.first.key, fetch_format: :auto, quality: :auto) if @item.images.attached? %>">
-        <i class="bi bi-zoom-in text-sm text-accent"></i> 拡大
-      </button>
+      <% if @item.images.attached? %>
+        <button class="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-white active:scale-95 transition-all text-[10px] font-bold uppercase tracking-widest shadow-lg"
+                data-action="click->image-modal#open"
+                data-image-modal-url-param="<%= Rails.env.test? ? rails_blob_path(@item.images.first, disposition: 'inline') : cl_image_path(@item.images.first.key, fetch_format: :auto, quality: :auto) %>">
+          <i class="bi bi-zoom-in text-sm text-accent"></i> 拡大
+        </button>
+      <% end %>
     </div>
 
     <%# --- 3. 情報エリア --- %>

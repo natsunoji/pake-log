@@ -1,59 +1,71 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["input", "previewBox", "image", "placeholderIcon", "count", "coverLabel"]
+  static targets = ["input", "image", "placeholderIcon", "count", "removeButton"]
 
   connect() {
-    // ページ読み込み時の画像数をカウント
-    this.updateCount()
+    this.allFiles = [] // 🌟 選択したファイルを溜めておく配列
   }
 
   triggerFile() {
+    this.inputTarget.removeAttribute("capture")
     this.inputTarget.click()
   }
 
   triggerCamera() {
     this.inputTarget.setAttribute("capture", "environment")
     this.inputTarget.click()
-    setTimeout(() => this.inputTarget.removeAttribute("capture"), 500)
   }
 
   preview() {
-    const files = Array.from(this.inputTarget.files)
-    if (files.length === 0) return
+    const newFiles = Array.from(this.inputTarget.files)
+    if (newFiles.length === 0) return
 
-    // プレビュー表示をリセット
+    // 🌟 既存のファイルに新しいファイルを追加（最大3枚まで）
+    this.allFiles = [...this.allFiles, ...newFiles].slice(0, 3)
+    
+    this.renderPreviews()
+    this.syncToInput() // 🌟 重要：inputの中身を最新の状態に同期する
+  }
+
+  renderPreviews() {
+    // 一旦リセット
     this.imageTargets.forEach((img, i) => {
       img.classList.add("hidden")
+      img.src = ""
       this.placeholderIconTargets[i].classList.remove("hidden")
-      if (i === 0 && this.hasCoverLabelTarget) this.coverLabelTarget.classList.add("hidden")
+      if (this.hasRemoveButtonTargets && this.removeButtonTargets[i]) {
+        this.removeButtonTargets[i].classList.add("hidden")
+      }
     })
 
-    // 選択された新しい画像を表示
-    files.slice(0, 3).forEach((file, index) => {
+    // 配列の中身を表示
+    this.allFiles.forEach((file, i) => {
       const reader = new FileReader()
       reader.onload = (e) => {
-        this.imageTargets[index].src = e.target.result
-        this.imageTargets[index].classList.remove("hidden")
-        this.placeholderIconTargets[index].classList.add("hidden")
-        if (index === 0 && this.hasCoverLabelTarget) this.coverLabelTarget.classList.remove("hidden")
+        this.imageTargets[i].src = e.target.result
+        this.imageTargets[i].classList.remove("hidden")
+        this.placeholderIconTargets[i].classList.add("hidden")
+        if (this.hasRemoveButtonTargets && this.removeButtonTargets[i]) {
+          this.removeButtonTargets[i].classList.remove("hidden")
+        }
       }
       reader.readAsDataURL(file)
     })
-
-    this.updateCount()
+    this.countTarget.textContent = this.allFiles.length
   }
 
-  // 編集時は「削除」ボタンの動作を一旦無効化（Railsの複雑な挙動を避けるため）
   remove(e) {
     const index = parseInt(e.currentTarget.dataset.index)
-    alert("画像を個別に削除する場合は、新しい画像を撮り直して上書きしてください。")
+    this.allFiles.splice(index, 1) // 配列から削除
+    this.renderPreviews()
+    this.syncToInput()
   }
 
-  updateCount() {
-    const currentCount = this.imageTargets.filter(img => !img.classList.contains('hidden')).length
-    this.countTarget.textContent = currentCount
+  // 🌟 フォーム送信時にこの allFiles の中身が送られるようにする
+  syncToInput() {
+    const dataTransfer = new DataTransfer()
+    this.allFiles.forEach(file => dataTransfer.items.add(file))
+    this.inputTarget.files = dataTransfer.files
   }
-
-  // syncInput は使わずに Rails の標準送信に任せます
 }
