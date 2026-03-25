@@ -3,9 +3,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # 🌟 パスワードなしでプロフィールを更新できるようにする
   def update_resource(resource, params)
-    # パスワード関連がすべて空の場合
     if params[:password].blank? && params[:password_confirmation].blank? && params[:current_password].blank?
-      # 🌟 修正：params から current_password を除外して更新する
+      # 🌟 修正ポイント：params から current_password を除外して更新
       resource.update_without_password(params.except(:current_password))
     else
       super
