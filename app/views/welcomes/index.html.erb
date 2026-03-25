@@ -1,20 +1,120 @@
-<%# 全体を上下にゆったりとした余白(py-20)で包む %>
-<div class="flex flex-col items-center justify-center py-20">
-  
-  <div class="text-center">
-    <%# アイコンエリア：背景色を少し薄くして存在感を調整 %>
-    <div class="inline-flex items-center justify-center w-20 h-20 bg-slate-50 rounded-full mb-6 shadow-sm">
-      <i class="bi bi-journal-plus text-3xl text-slate-300"></i>
-    </div>
+<div class="flex flex-col min-h-screen bg-white font-sans text-[#11243B]">
+  <%# 1. 既存のネイビーヘッダー %>
+  <%= render 'shared/header' %>
 
-    <%# メインメッセージ：text-primary（ネイビー）を強調 %>
-    <h1 class="text-2xl font-bold text-primary mb-3">記録はまだありません</h1>
-    
-    <%# サブテキスト：行間(leading-loose)を広げて読みやすく %>
-    <p class="text-slate-500 leading-loose max-w-xs mx-auto">
-      下の「追加」ボタンから、<br>
-      新しい説明書を登録しましょう。
-    </p>
-  </div>
+  <main class="flex-grow pt-16">
+    <%# 2. ヒーローセクション %>
+    <section class="py-12 px-6 text-center">
+      <div class="mb-6 flex justify-center">
+        <% if Rails.application.assets.find_asset('Pakelog_logo2.svg') %>
+          <%= image_tag 'Pakelog_logo2.svg', class: 'h-16 w-auto', alt: 'PakeLog' %>
+        <% else %>
+          <div class="flex flex-col items-center gap-2">
+            <span class="text-3xl font-black tracking-tighter text-[#11243B]">PakeLog</span>
+          </div>
+        <% end %>
+      </div>
+      
+      <h1 class="text-2xl md:text-4xl font-black mb-4 leading-snug tracking-tight">
+        説明書も、パッケージも。<br>
+        <span class="text-[#8CC134] text-xl md:text-3xl">撮って、捨てて、スッキリ。</span>
+      </h1>
+      
+      <p class="text-sm md:text-base text-gray-600 mb-8 font-bold leading-relaxed">
+        「捨てられない」で溢れたフォルダを、<br>
+        大切な思い出だけの場所に。
+      </p>
 
+      <%# 3. ログイン・新規登録ボタン %>
+      <div class="flex gap-4 max-w-sm mx-auto mb-6 px-2">
+        <%= link_to "ログイン", new_user_session_path, 
+            class: "flex-1 py-4 border-2 border-[#11243B] text-[#11243B] font-black rounded-2xl text-center hover:bg-gray-50 transition-all active:scale-95" %>
+        <%= link_to "新規登録", new_user_registration_path, 
+            class: "flex-1 py-4 bg-[#11243B] text-white font-black rounded-2xl text-center shadow-lg hover:opacity-90 transition-all active:scale-95" %>
+      </div>
+    </section>
+
+    <%# 4. 使い方セクション %>
+    <section class="py-8 bg-gray-50 px-6">
+      <h2 class="text-2xl font-black text-center mb-10 underline decoration-[#8CC134] decoration-8 underline-offset-8">使い方</h2>
+      
+      <div class="max-w-md mx-auto space-y-8">
+        <%# STEP 1 %>
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 bg-[#8CC134] text-white rounded-full flex items-center justify-center font-black">1</span>
+            <h3 class="font-black text-lg">写真を撮る</h3>
+          </div>
+          <div class="aspect-video bg-white rounded-2xl mb-4 overflow-hidden flex items-center justify-center">
+            <%= image_tag 'step1_take_photo.png', class: 'w-full h-full object-contain' if Rails.application.assets.find_asset('step1_take_photo.png') %>
+          </div>
+          <p class="text-sm font-bold text-gray-500 text-center">説明書の写真を撮影</p>
+        </div>
+
+        <%# STEP 2 %>
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 bg-[#8CC134] text-white rounded-full flex items-center justify-center font-black">2</span>
+            <h3 class="font-black text-lg">保存して情報を登録</h3>
+          </div>
+          <div class="aspect-video bg-white rounded-2xl mb-4 overflow-hidden flex items-center justify-center">
+            <%= image_tag 'step2_save_data.png', class: 'w-full h-full object-contain' if Rails.application.assets.find_asset('step2_save_data.png') %>
+          </div>
+          <p class="text-sm font-bold text-gray-500 text-center">名前を付けて商品情報を登録</p>
+        </div>
+
+        <%# STEP 3 %>
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-8 bg-[#8CC134] text-white rounded-full flex items-center justify-center font-black">3</span>
+            <h3 class="font-black text-lg">実物を処分して断捨離！</h3>
+          </div>
+          <div class="aspect-video bg-white rounded-2xl mb-4 overflow-hidden flex items-center justify-center">
+            <%= image_tag 'step3_declutter.png', class: 'w-full h-full object-contain' if Rails.application.assets.find_asset('step3_declutter.png') %>
+          </div>
+          <p class="text-sm font-bold text-gray-500 text-center">実物を処分し、スッキリさせましょう！</p>
+        </div>
+      </div>
+    </section>
+
+    <%# 5. ホーム画面に追加の案内 %>
+    <section class="py-12 px-6 bg-white text-center">
+      <div class="max-w-sm mx-auto p-8 bg-[#8CC134]/10 rounded-[2.5rem] border border-[#8CC134]/20 shadow-inner">
+        <div class="flex items-center justify-center gap-3 mb-6 text-[#11243B]">
+          <div class="relative">
+            <i class="bi bi-plus-square text-4xl text-[#11243B]"></i>
+            <i class="bi bi-cursor-fill text-xl text-[#8CC134] absolute -bottom-2 -right-2"></i>
+          </div>
+          <h3 class="text-lg font-black leading-tight text-left">
+            iPhoneをお使いの方へ<br>
+            <span class="text-sm font-bold text-gray-500">アプリのようにサクサク使う</span>
+          </h3>
+        </div>
+        
+        <div class="space-y-4 text-xs md:text-sm text-gray-700 font-medium leading-relaxed">
+          <p class="flex items-center justify-center gap-2">
+            1. Safari下の <i class="bi bi-box-arrow-up text-lg text-[#11243B]"></i> をタップ
+          </p>
+          <p class="flex items-center justify-center gap-2">
+            2. <i class="bi bi-plus-square text-lg text-[#11243B]"></i> <span class="font-black text-[#11243B]">「ホーム画面に追加」</span> を選択
+          </p>
+        </div>
+
+        <p class="mt-6 text-[10px] md:text-xs text-gray-400 font-bold">
+          ブラウザの枠が消えて、<br>
+          アプリのようにサクサク起動できます！
+        </p>
+      </div>
+    </section>
+
+    <%# 6. 最後のダメ押しボタン %>
+    <section class="py-16 px-6 text-center">
+      <h2 class="text-xl font-black mb-8 leading-relaxed">さあ、あなたもパケログで<br>お部屋とスマホを広げませんか？</h2>
+      <%= link_to "さっそくはじめる", new_user_registration_path, 
+          class: "inline-block w-full max-w-sm bg-[#11243B] text-white py-5 rounded-2xl text-xl font-black shadow-2xl active:scale-95 transition-all" %>
+    </section>
+  </main>
+
+  <%# 7. shared/footer の呼び出し %>
+  <%= render 'shared/footer' %>
 </div>
