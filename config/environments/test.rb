@@ -64,4 +64,12 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # 🌟 追記：テスト実行時に Cloudinary のダミー環境変数を強制的にセットする
+  # これにより、CI環境などで環境変数が読み込まれないことによる 500エラーを回避します
+  config.after_initialize do
+    ENV["CLOUDINARY_CLOUD_NAME"] ||= "dummy_name"
+    ENV["CLOUDINARY_API_KEY"]    ||= "123456789"
+    ENV["CLOUDINARY_API_SECRET"] ||= "abcdefg"
+  end
 end
