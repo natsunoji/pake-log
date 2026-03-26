@@ -62,6 +62,7 @@ GEM
       activerecord (= 7.2.3)
       activesupport (= 7.2.3)
       marcel (~> 1.0)
+    activestorage-cloudinary-service (0.2.3)
     activesupport (7.2.3)
       base64
       benchmark (>= 0.3)
@@ -405,6 +406,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  activestorage-cloudinary-service
   bcrypt (~> 3.1.7)
   bootsnap
   brakeman
@@ -442,6 +444,7 @@ CHECKSUMS
   activemodel (7.2.3) sha256=bbaf66aeb93212e98ebf6ab900f8290f9a831645f0b235427f5acf0e074739db
   activerecord (7.2.3) sha256=6facb7478ceb5f6baa9f0647daa50b4a3a43934997900f0011e6c667ff41a0d7
   activestorage (7.2.3) sha256=4c1422bbfaa60c89e7b43cc38ade7bd3b8dc81024c48a21c1ac56814cf34ca2f
+  activestorage-cloudinary-service (0.2.3) sha256=d26749fc744cc05acca0d7778dc6484637217cbf11e4c1114cf0e758d19c3e30
   activesupport (7.2.3) sha256=5675c9770dac93e371412684249f9dc3c8cec104efd0624362a520ae685c7b10
   addressable (2.8.9) sha256=cc154fcbe689711808a43601dee7b980238ce54368d23e127421753e46895485
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
