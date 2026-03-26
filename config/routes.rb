@@ -2,7 +2,6 @@ Rails.application.routes.draw do
   # 1. 共通ページ（利用規約など）
   get "terms", to: "static_pages#terms"
   get "privacy", to: "static_pages#privacy"
-  # 🌟 ここに追加！
   get "contact", to: "static_pages#contact"
 
   # 2. 認証系 (Devise)
@@ -27,7 +26,8 @@ Rails.application.routes.draw do
 
   root "welcomes#index"
 
-  # --- 以下、システム関連 ---
+  # --- システム関連 ---
+  # ヘルスチェック用（Railsの標準機能を使用）
   get "up" => "rails/health#show", as: :rails_health_check
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
