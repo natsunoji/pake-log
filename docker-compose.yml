@@ -10,7 +10,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -h localhost"]  # -h localhost を追加
+      test: ["CMD-SHELL", "pg_isready -U postgres -h localhost"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -28,6 +28,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
       TZ: Asia/Tokyo
       DATABASE_HOST: db
