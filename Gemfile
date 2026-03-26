@@ -31,6 +31,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "bootsnap", require: false
 
 gem "cloudinary"
+gem "activestorage-cloudinary-service"
 
 # Use Active Storage variants
 gem "image_processing", "~> 1.2"
