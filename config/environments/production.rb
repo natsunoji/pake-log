@@ -78,6 +78,9 @@ Rails.application.configure do
   # caching is enabled.
   config.action_mailer.perform_caching = false
 
+  # 🌟 追加：パスワードリセットメールのリンク用のホスト設定
+  config.action_mailer.default_url_options = { host: "pake-log.onrender.com" }
+
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
