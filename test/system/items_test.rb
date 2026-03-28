@@ -36,13 +36,14 @@ class ItemsTest < ApplicationSystemTestCase
     stub_cloudinary_upload do
       visit new_item_url
 
+      # 画像を添付
       attach_file "item_image_input",
                   Rails.root.join("test/fixtures/files/test_image.png"),
                   visible: false
 
-      submit_button = find('input[type="submit"]')
-      submit_button.at_js.scroll_into_view
-      submit_button.click
+      # 🌟 修正：ボトムナビを消したので、特別なスクロール命令は不要です！
+      # 標準の click_on だけで、Capybaraが自動的にボタンを見つけてくれます。
+      click_on "この内容で登録する"
 
       assert_text "名前を入力してください"
     end
