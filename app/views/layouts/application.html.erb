@@ -16,11 +16,11 @@
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
 
-    <%# --- 🌟 ブランディングアセット (favicon/AppIcon) --- %>
+    <%# --- ブランディングアセット (favicon/AppIcon) --- %>
     <%= favicon_link_tag 'favicon.png' %>
-    <%= rel_apple_touch_icon_link_tag 'apple-touch-icon.png' %>
+    <%= favicon_link_tag 'apple-touch-icon.png', rel: 'apple-touch-icon', type: 'image/png' %>
 
-    <%# --- 🌟 OGP (SNS共有用) 設定 --- %>
+    <%# --- OGP (SNS共有用) 設定 --- %>
     <meta property="og:site_name" content="PakeLog" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="PakeLog - パケを愛でる記録アプリ" />
@@ -36,7 +36,7 @@
     
     <%# --- 1. ヘッダー判定・変数準備ロジック --- %>
     <% 
-      # 🌟 ロゴヘッダー(パターンB)を出す条件
+      # ロゴヘッダー(パターンB)を出す条件
       is_top_page = (controller_name == 'welcomes' && action_name == 'index')
       
       is_logo_header = is_top_page || 
