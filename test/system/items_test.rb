@@ -26,7 +26,7 @@ class ItemsTest < ApplicationSystemTestCase
       # 登録後は「完了画面」ではなく「詳細画面」に行くようになったので、
       # 詳細画面に存在するテキストを確認します。
       assert_text "登録しました"        # フラッシュメッセージ
-      assert_text "説明書詳細"          # ヘッダータイトル
+      assert_text "パケの詳細"          # ヘッダータイトル
       assert_text "テストのパケ"        # 登録した名前
     end
   end

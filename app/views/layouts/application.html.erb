@@ -7,12 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
-    <%# --- 🌟 Apple Touch Icon (iPhoneホーム画面用アイコン) の設定 --- %>
     <%= favicon_link_tag 'apple-touch-icon.png', rel: 'apple-touch-icon', type: 'image/png' %>
-    
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
@@ -21,32 +18,71 @@
 
   <body class="min-h-screen m-0 p-0 bg-white font-sans antialiased text-primary overflow-x-hidden">
     
-    <%# 
-      1. ヘッダーを表示する条件：
-        - ホーム画面(items#index)
-        - または ログイン・新規登録などのDevise関連画面
+    <%# --- 1. ヘッダー判定・変数準備ロジック --- %>
+    <% 
+      # 🌟 ロゴヘッダー(パターンB)を出す条件を最新の構成に最適化
+      is_top_page = (controller_name == 'welcomes' && action_name == 'index')
+      
+      is_logo_header = is_top_page || 
+                        (devise_controller? && !user_signed_in?) || 
+                        (user_signed_in? && controller_name == 'items' && action_name == 'index') || 
+                        (user_signed_in? && controller_name == 'settings' && action_name == 'show')
+
+      # 白ヘッダー(パターンA)の場合のタイトルと戻り先
+      unless is_logo_header
+        case controller_name
+        when 'items'
+          case action_name
+          when 'new', 'create' then p_title, p_back = ["パケを登録", items_path]
+          when 'edit', 'update' then p_title, p_back = ["パケを編集", item_path(@item)]
+          when 'show' then p_title, p_back = ["パケの詳細", items_path]
+          end
+        when 'static_pages', 'welcomes'
+          p_title = case action_name
+                    when 'terms' then "利用規約"
+                    when 'privacy' then "プライバシーポリシー"
+                    when 'contact' then "お問い合わせ"
+                    else "PakeLog"
+                    end
+          p_back = user_signed_in? ? settings_path : root_path
+        when 'registrations', 'profiles'
+          p_title, p_back = ["プロフィール編集", settings_path]
+        else
+          p_title, p_back = ["PakeLog", root_path]
+        end
+      end
+
+      # ボトムナビを隠すページ
+      hide_bottom_nav = devise_controller? || controller_name == 'static_pages' || controller_name == 'welcomes'
     %>
-    <% if (controller_name == 'items' && action_name == 'index') || devise_controller? %>
+
+    <%# --- 2. ヘッダーの描画 --- %>
+    <% if is_logo_header %>
       <%= render 'shared/header' %>
+    <% else %>
+      <%= render 'shared/header', 
+          title: p_title, 
+          back_path: p_back, 
+          right_content: (content_for?(:header_right) ? yield(:header_right) : nil) %>
     <% end %>
 
-    <%# 
-      2. メインコンテンツ：
-        ヘッダーが出る画面の時だけ、上に pt-16 (64px) の余白を入れる
-    %>
-    <% has_header = (controller_name == 'items' && action_name == 'index') || devise_controller? %>
-    <main class="w-full <%= has_header ? 'pt-16' : '' %>">
+    <%# --- 3. メインコンテンツ --- %>
+    <main class="w-full <%= is_logo_header ? 'pt-16' : 'pt-12' %>">
       <%= render 'shared/flash_messages' %>
       <%= yield %>
     </main>
 
-    <%# 
-      3. ボトムナビ：
-        ログイン中 かつ ログイン画面系ではない時だけ表示
-    %>
-    <% if user_signed_in? && !devise_controller? %>
+    <%# --- 4. ボトムナビ --- %>
+    <% if user_signed_in? && !hide_bottom_nav %>
       <%= render 'shared/bottom_navigation' %>
     <% end %>
+
+    <%# --- 5. フッター --- %>
+    <% if !user_signed_in? || controller_name == 'static_pages' || controller_name == 'welcomes' %>
+      <%= render 'shared/footer' %>
+    <% end %>
+
+    <%# --- 6. ログアウトモーダル --- %>
     <% if user_signed_in? %>
       <%= render 'shared/logout_modal' %>
     <% end %>

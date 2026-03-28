@@ -12,15 +12,15 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update, keys: [ :name ])
   end
 
-  # 🌟 追加：プロフィール（Account）更新後に設定画面へ戻す
+  # プロフィール更新後に設定画面へ戻す
   def after_update_path_for(resource)
     settings_path
   end
 
   private
 
-  # ログアウト後にログイン画面へ飛ばす
+  # ログアウト・退会後にトップ画面（LP）へ飛ばす
   def after_sign_out_path_for(resource_or_scope)
-    new_user_session_path
+    root_path
   end
 end
