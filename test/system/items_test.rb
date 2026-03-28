@@ -26,7 +26,7 @@ class ItemsTest < ApplicationSystemTestCase
       # 登録後は「完了画面」ではなく「詳細画面」に行くようになったので、
       # 詳細画面に存在するテキストを確認します。
       assert_text "登録しました"        # フラッシュメッセージ
-      assert_text "説明書詳細"          # ヘッダータイトル
+      assert_text "パケの詳細"          # ヘッダータイトル
       assert_text "テストのパケ"        # 登録した名前
     end
   end
@@ -36,10 +36,13 @@ class ItemsTest < ApplicationSystemTestCase
     stub_cloudinary_upload do
       visit new_item_url
 
+      # 画像を添付
       attach_file "item_image_input",
                   Rails.root.join("test/fixtures/files/test_image.png"),
                   visible: false
 
+      # 🌟 修正：ボトムナビを消したので、特別なスクロール命令は不要です！
+      # 標準の click_on だけで、Capybaraが自動的にボタンを見つけてくれます。
       click_on "この内容で登録する"
 
       assert_text "名前を入力してください"

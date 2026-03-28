@@ -1,11 +1,9 @@
-<%# app/views/shared/_logout_modal.html.erb %>
 <div id="logout-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-6 transition-all">
-  <%# 背景のぼかし：削除モーダルと同一 %>
+  <%# 背景のぼかし %>
   <div class="absolute inset-0 bg-primary/40 backdrop-blur-sm" onclick="closeLogoutModal()"></div>
   
   <div class="relative bg-white w-full max-w-xs rounded-[32px] overflow-hidden shadow-2xl">
     <div class="pt-10 pb-6 px-6 text-center">
-      <%# アイコン：赤色からネイビーの背景に変更 %>
       <div class="w-14 h-14 bg-base-bg text-primary rounded-full flex items-center justify-center mx-auto mb-5">
         <i class="bi bi-box-arrow-right text-2xl ml-1"></i>
       </div>
@@ -16,11 +14,14 @@
     </div>
     
     <div class="flex border-t border-base-border h-16">
-      <button onclick="closeLogoutModal()" class="flex-1 text-primary text-sm font-black hover:bg-base-bg transition-colors border-r border-base-border">
+      <button onclick="closeLogoutModal()" class="flex-1 text-primary text-sm font-black hover:bg-base-bg transition-colors border-r border-base-border cursor-pointer">
         キャンセル
       </button>
-      <%# 実行ボタン：ネイビー背景 %>
-      <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "flex-1 h-full text-white bg-primary text-sm font-black flex items-center justify-center active:opacity-90 transition-opacity" do %>
+      <%# 🌟 onclick="closeLogoutModal()" を追加してスクロール禁止を解除してから遷移させる %>
+      <%= link_to destroy_user_session_path, 
+          data: { turbo_method: :delete }, 
+          onclick: "closeLogoutModal()",
+          class: "flex-1 h-full text-white bg-primary text-sm font-black flex items-center justify-center active:opacity-90 transition-opacity cursor-pointer" do %>
         ログアウト
       <% end %>
     </div>
@@ -29,11 +30,21 @@
 
 <script>
   function openLogoutModal() {
-    document.getElementById('logout-modal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+    const modal = document.getElementById('logout-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
   }
   function closeLogoutModal() {
-    document.getElementById('logout-modal').classList.add('hidden');
-    document.body.style.overflow = 'auto';
+    const modal = document.getElementById('logout-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
   }
+
+  document.addEventListener("turbo:before-cache", function() {
+    closeLogoutModal();
+  });
 </script>

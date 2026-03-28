@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
 Devise.setup do |config|
-  # ==> Mailer Configuration
-  # 🌟 ここを変更しました！
-  # 表示名を「PakeLog」、アドレスを自分の好きなもの（例: natsunoji@gmail.com など）に変えられます。
   config.mailer_sender = "PakeLog <no-reply@pake-log.com>"
-
-  # --- 以下、デフォルトの設定を維持しつつ整理した内容です ---
+  # 登録のないメールアドレスでも「送信しました」と表示する。
+  config.paranoid = true
 
   require "devise/orm/active_record"
 
@@ -23,6 +20,5 @@ Devise.setup do |config|
   config.responder.error_status = :unprocessable_content
   config.responder.redirect_status = :see_other
 
-  # もし将来的に独自のメーラークラスを使う場合はここをアンコメントします
   # config.mailer = 'Devise::Mailer'
 end

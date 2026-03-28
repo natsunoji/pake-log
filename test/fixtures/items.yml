@@ -9,3 +9,9 @@ two:
   category: two
   name: "全自動洗濯機"
   memo: "洗剤投入口は週に一度洗う。"
+
+other_item:
+  name: "他人のひみつのパケ"
+  memo: "これは自分以外のユーザーの持ち物です"
+  user: other_user # 🌟 users.yml に 'other_user' が定義されている必要があります
+  category: one    # 🌟 categories.yml にある適当なカテゴリ名

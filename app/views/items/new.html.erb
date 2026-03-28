@@ -1,128 +1,121 @@
-<%# 画面全体を囲むコンテナ %>
-<div class="min-h-screen bg-white pb-32 font-sans antialiased text-primary">
-  
-  <%# --- 1. Sharedヘッダー呼び出しに置き換え（戻る先は一覧画面） --- %>
-  <%= render 'shared/header', title: "新規登録", back_path: items_path %>
+<div class="px-6 py-8">
+  <%= form_with(model: @item, data: { turbo: true, action: "submit->input-images#syncInput" }, multipart: true) do |f| %>
 
-  <div class="px-6 py-8">
-    <%= form_with(model: @item, data: { turbo: true, action: "submit->input-images#syncInput" }, multipart: true) do |f| %>
-
-      <%# エラーメッセージ %>
-      <div id="item_error_messages">
-        <% if @item.errors.any? %>
-          <div class="bg-danger-light border-l-4 border-danger p-4 mb-6 rounded-r-xl shadow-sm overflow-hidden">
-            <ul class="list-disc list-inside text-[10px] text-danger font-bold space-y-0.5">
-              <% @item.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %>
-      </div>
-
-      <%# --- 2. 画像エリア --- %>
-      <div class="mb-8" data-controller="input-images">
-        <div class="flex items-center justify-between mb-4 ml-1">
-          <div class="flex items-baseline">
-            <span class="text-sm font-bold text-primary">パケの画像</span>
-            <span class="ml-2 text-[10px] font-bold text-danger">（必須）</span>
-          </div>
-          <span class="text-[10px] font-black text-primary bg-accent rounded-full px-3 py-1 uppercase tracking-widest leading-none">最大3枚</span>
-        </div>
-
-        <div class="hidden">
-          <%= f.file_field :images, 
-              multiple: true, 
-              data: { input_images_target: "input", action: "change->input-images#preview" }, 
-              accept: "image/*",
-              id: "item_image_input" %>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 mb-6">
-          <button type="button" class="flex flex-col items-center justify-center gap-2 rounded-2xl bg-base-bg border-2 border-transparent hover:border-accent py-5 transition-all group active:scale-95" 
-                  data-action="click->input-images#triggerCamera">
-            <div class="h-10 w-10 rounded-full bg-white flex items-center justify-center shadow-sm text-primary group-hover:scale-110 transition-transform">
-              <i class="bi bi-camera text-xl"></i>
-            </div>
-            <span class="text-sm font-bold text-primary">撮影する</span>
-          </button>
-
-          <button type="button" class="flex flex-col items-center justify-center gap-2 rounded-2xl bg-base-bg border-2 border-transparent hover:border-accent py-5 transition-all group active:scale-95" 
-                  data-action="click->input-images#triggerFile">
-            <div class="h-10 w-10 rounded-full bg-white flex items-center justify-center shadow-sm text-primary group-hover:scale-110 transition-transform">
-              <i class="bi bi-folder text-xl"></i>
-            </div>
-            <span class="text-sm font-bold text-primary">ファイルから選択</span>
-          </button>
-        </div>
-
-        <div class="mt-2">
-          <p class="text-[10px] font-bold text-base-text mb-3 ml-1">
-            選択中の画像 (<span data-input-images-target="count">0</span>/3)
-          </p>
-          <div class="grid grid-cols-3 gap-3 overflow-hidden">
-            <% 3.times do |index| %>
-              <div class="relative aspect-square rounded-2xl overflow-hidden border-2 border-dashed border-base-border bg-base-bg flex items-center justify-center text-gray-300" 
-                  data-input-images-target="previewBox">
-                <img class="hidden absolute inset-0 w-full h-full object-cover" data-input-images-target="image">
-                
-                <%# 🌟 修正ポイント：data-input-images-target="removeButton" を追加 %>
-                <button type="button" 
-                        class="hidden absolute top-1 right-1 h-6 w-6 rounded-full bg-danger text-white flex items-center justify-center shadow-md z-10"
-                        data-action="click->input-images#remove"
-                        data-input-images-target="removeButton"
-                        data-index="<%= index %>">
-                  <i class="bi bi-x text-lg"></i>
-                </button>
-
-                <i class="bi bi-image text-2xl" data-input-images-target="placeholderIcon"></i>
-                <% if index == 0 %>
-                  <div class="hidden absolute bottom-0 left-0 right-0 bg-primary/70 backdrop-blur-[2px] py-1 text-center" data-input-images-target="coverLabel">
-                    <span class="text-[9px] font-bold text-white uppercase tracking-tighter leading-none">カバー画像</span>
-                  </div>
-                <% end %>
-              </div>
+    <%# エラーメッセージ %>
+    <div id="item_error_messages">
+      <% if @item.errors.any? %>
+        <div class="bg-danger-light border-l-4 border-danger p-4 mb-6 rounded-r-xl shadow-sm overflow-hidden">
+          <ul class="list-disc list-inside text-[10px] text-danger font-bold space-y-0.5">
+            <% @item.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
             <% end %>
-          </div>
+          </ul>
         </div>
-      </div>
+      <% end %>
+    </div>
 
-      <%# --- 3. 入力項目エリア --- %>
-      <div class="mb-6">
-        <div class="flex items-center mb-1.5 ml-1">
-          <%= f.label :name, "パケの名前", class: "text-sm font-bold text-primary" %>
+    <%# ---  画像エリア --- %>
+    <div class="mb-8" data-controller="input-images">
+      <div class="flex items-center justify-between mb-4 ml-1">
+        <div class="flex items-baseline">
+          <span class="text-sm font-bold text-primary">パケの画像</span>
           <span class="ml-2 text-[10px] font-bold text-danger">（必須）</span>
         </div>
-        <%= f.text_field :name, placeholder: "例：ドライヤー（型番）", class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold" %>
+        <span class="text-[10px] font-black text-primary bg-accent rounded-full px-3 py-1 uppercase tracking-widest leading-none">最大3枚</span>
       </div>
 
-      <div class="mb-6">
-        <div class="flex items-center mb-1.5 ml-1">
-          <%= f.label :category_id, "カテゴリ", class: "text-sm font-bold text-primary" %>
-        </div>
-        <div class="relative">
-          <%= f.collection_select :category_id, Category.where(id: Category.select("MIN(id)").group(:name)), :id, :name, { prompt: "カテゴリを選択" }, { class: "w-full px-5 py-4 !appearance-none border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold", style: "background-image: none;" } %>
-          <div class="absolute inset-y-0 right-5 flex items-center pointer-events-none text-base-text/50">
-            <i class="bi bi-chevron-down text-lg"></i>
+      <div class="hidden">
+        <%= f.file_field :images, 
+            multiple: true, 
+            data: { input_images_target: "input", action: "change->input-images#preview" }, 
+            accept: "image/*",
+            id: "item_image_input" %>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <button type="button" class="flex flex-col items-center justify-center gap-2 rounded-2xl bg-base-bg border-2 border-transparent hover:border-accent py-5 transition-all group active:scale-95" 
+                data-action="click->input-images#triggerCamera">
+          <div class="h-10 w-10 rounded-full bg-white flex items-center justify-center shadow-sm text-primary group-hover:scale-110 transition-transform">
+            <i class="bi bi-camera text-xl"></i>
           </div>
+          <span class="text-sm font-bold text-primary">撮影する</span>
+        </button>
+
+        <button type="button" class="flex flex-col items-center justify-center gap-2 rounded-2xl bg-base-bg border-2 border-transparent hover:border-accent py-5 transition-all group active:scale-95" 
+                data-action="click->input-images#triggerFile">
+          <div class="h-10 w-10 rounded-full bg-white flex items-center justify-center shadow-sm text-primary group-hover:scale-110 transition-transform">
+            <i class="bi bi-folder text-xl"></i>
+          </div>
+          <span class="text-sm font-bold text-primary">ファイルから選択</span>
+        </button>
+      </div>
+
+      <div class="mt-2">
+        <p class="text-[10px] font-bold text-base-text mb-3 ml-1">
+          選択中の画像 (<span data-input-images-target="count">0</span>/3)
+        </p>
+        <div class="grid grid-cols-3 gap-3 overflow-hidden">
+          <% 3.times do |index| %>
+            <div class="relative aspect-square rounded-2xl overflow-hidden border-2 border-dashed border-base-border bg-base-bg flex items-center justify-center text-gray-300" 
+                data-input-images-target="previewBox">
+              <img class="hidden absolute inset-0 w-full h-full object-cover" data-input-images-target="image">
+              
+              <%# 🌟 修正ポイント：data-input-images-target="removeButton" を追加 %>
+              <button type="button" 
+                      class="hidden absolute top-1 right-1 h-6 w-6 rounded-full bg-danger text-white flex items-center justify-center shadow-md z-10"
+                      data-action="click->input-images#remove"
+                      data-input-images-target="removeButton"
+                      data-index="<%= index %>">
+                <i class="bi bi-x text-lg"></i>
+              </button>
+
+              <i class="bi bi-image text-2xl" data-input-images-target="placeholderIcon"></i>
+              <% if index == 0 %>
+                <div class="hidden absolute bottom-0 left-0 right-0 bg-primary/70 backdrop-blur-[2px] py-1 text-center" data-input-images-target="coverLabel">
+                  <span class="text-[9px] font-bold text-white uppercase tracking-tighter leading-none">カバー画像</span>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
         </div>
       </div>
+    </div>
 
-      <div class="mb-8 overflow-hidden rounded-2xl border border-base-border">
-        <div class="flex items-center py-3.5 px-5 bg-base-bg/50 border-b border-base-border">
-          <%= f.label :memo, "メモ", class: "text-sm font-bold text-primary" %>
+    <%# --- 3. 入力項目エリア --- %>
+    <div class="mb-6">
+      <div class="flex items-center mb-1.5 ml-1">
+        <%= f.label :name, "パケの名前", class: "text-sm font-bold text-primary" %>
+        <span class="ml-2 text-[10px] font-bold text-danger">（必須）</span>
+      </div>
+      <%= f.text_field :name, placeholder: "例：サプリメント（メーカー）", class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold" %>
+    </div>
+
+    <div class="mb-6">
+      <div class="flex items-center mb-1.5 ml-1">
+        <%= f.label :category_id, "カテゴリ", class: "text-sm font-bold text-primary" %>
+      </div>
+      <div class="relative">
+        <%= f.collection_select :category_id, Category.where(id: Category.select("MIN(id)").group(:name)), :id, :name, { prompt: "カテゴリを選択" }, { class: "w-full px-5 py-4 !appearance-none border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold", style: "background-image: none;" } %>
+        <div class="absolute inset-y-0 right-5 flex items-center pointer-events-none text-base-text/50">
+          <i class="bi bi-chevron-down text-lg"></i>
         </div>
-        <%= f.text_area :memo, placeholder: "購入日、場所など...", rows: 3, class: "w-full px-5 py-4 border-none text-primary text-base focus:ring-0 resize-none h-32" %>
       </div>
+    </div>
 
-      <div class="bg-warning-bg rounded-xl p-4 flex items-center space-x-3 mb-10 border border-warning-border">
-        <i class="bi bi-exclamation-triangle-fill text-xl text-warning-icon"></i>
-        <p class="text-[10px] leading-tight text-warning-text font-bold">個人情報は登録しないでください。</p>
+    <div class="mb-8 overflow-hidden rounded-2xl border border-base-border">
+      <div class="flex items-center py-3.5 px-5 bg-base-bg/50 border-b border-base-border">
+        <%= f.label :memo, "メモ", class: "text-sm font-bold text-primary" %>
       </div>
+      <%= f.text_area :memo, placeholder: "購入日、場所など...", rows: 3, class: "w-full px-5 py-4 border-none text-primary text-base focus:ring-0 resize-none h-32" %>
+    </div>
 
-      <div class="relative z-10">
-        <%= f.submit "この内容で登録する", class: "w-full bg-primary text-white font-black py-5 rounded-full text-lg shadow-lg active:translate-y-0.5 transition-all tracking-widest" %>
-      </div>
-    <% end %>
-  </div>
+    <div class="bg-warning-bg rounded-xl p-4 flex items-center space-x-3 mb-10 border border-warning-border">
+      <i class="bi bi-exclamation-triangle-fill text-xl text-warning-icon"></i>
+      <p class="text-[10px] leading-tight text-warning-text font-bold">クレカ番号やマイナンバー等の<br>個人情報は登録しないでください。</p>
+    </div>
+
+    <div class="relative z-10">
+      <%= f.submit "この内容で登録する", class: "w-full bg-primary text-white font-black py-5 rounded-full text-lg shadow-lg active:translate-y-0.5 transition-all tracking-widest" %>
+    </div>
+  <% end %>
 </div>

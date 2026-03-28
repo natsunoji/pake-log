@@ -1,151 +1,114 @@
-<%# 全体コンテナ：carousel と image-modal のコントローラーを管理 %>
-<div class="min-h-screen bg-white pb-24 font-sans antialiased text-primary pt-3" data-controller="carousel image-modal">
+<%# 🌟 1. ヘッダーの右側に入れるコンテンツを「預ける」 %>
+<% content_for :header_right do %>
+  <button onclick="openDeleteModal()" class="w-10 h-10 flex items-center justify-center text-danger hover:bg-danger-light rounded-full active:scale-95 transition-all">
+    <i class="bi bi-trash text-xl"></i>
+  </button>
+  <%= link_to edit_item_path(@item), class: "w-10 h-10 flex items-center justify-center text-primary hover:bg-base-bg rounded-full active:scale-95 transition-all" do %>
+    <i class="bi bi-pencil-square text-xl"></i>
+  <% end %>
+<% end %>
 
-  <%# --- 1. Sharedヘッダー呼び出し --- %>
-  <%= render 'shared/header', 
-      title: "説明書詳細", 
-      back_path: items_path, 
-      right_content: capture { %>
-    <button onclick="openDeleteModal()" class="w-10 h-10 flex items-center justify-center text-danger hover:bg-danger-light rounded-full active:scale-95 transition-all">
-      <i class="bi bi-trash text-xl"></i>
-    </button>
-    <%= link_to edit_item_path(@item), class: "w-10 h-10 flex items-center justify-center text-primary hover:bg-base-bg rounded-full active:scale-95 transition-all" do %>
-      <i class="bi bi-pencil-square text-xl"></i>
-    <% end %>
-  <% } %>
-
-  <main class="max-w-md mx-auto">
-    <%# --- 2. 画像カルーセル --- %>
-    <div class="relative w-full aspect-[3/4] bg-base-bg border-b border-base-border overflow-hidden">
-      <div class="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth" 
-           data-carousel-target="container" 
-           data-action="scroll->carousel#updateDots">
-        <% if @item.images.attached? %>
-          <% @item.images.each_with_index do |image, index| %>
-            <div class="w-full h-full flex-shrink-0 snap-center flex items-center justify-center p-2">
-              <%# 💡 image_tag を cl_image_tag に修正 %>
-              <% if Rails.env.test? %>
-  <%# テスト環境では image_tag を使用 %>
-                <%= image_tag rails_blob_path(image, disposition: "inline"), 
-                    class: "max-w-full max-h-full object-contain shadow-sm rounded-lg cursor-pointer active:scale-95 transition-transform",
-                    data: { 
-                      action: "click->image-modal#open",
-                      image_modal_url_param: rails_blob_path(image, disposition: "inline")
-                    } %>
-              <% else %>
-                <%# 本番環境では cl_image_tag を使用 %>
-                <%= cl_image_tag image.key, 
-                    transformation: [
-                      { width: 1200, height: 1200, crop: :limit },
-                      { fetch_format: :auto, quality: :auto }
-                    ],
-                    class: "max-w-full max-h-full object-contain shadow-sm rounded-lg cursor-pointer active:scale-95 transition-transform",
-                    data: { 
-                      action: "click->image-modal#open",
-                      image_modal_url_param: cl_image_path(image.key, fetch_format: :auto, quality: :auto)
-                    } %>
-              <% end %>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-
-      <%# インジケータードット %>
-      <% if @item.images.attached? && @item.images.count > 1 %>
-        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-sm z-20 border border-black/5">
-          <% @item.images.each_with_index do |_, index| %>
-            <div class="w-1.5 h-1.5 rounded-full transition-all duration-300" data-carousel-target="dot"></div>
-          <% end %>
-        </div>
-      <% end %>
-
-      <%# 拡大ボタン %>
+<%# --- メインコンテンツ --- %>
+<main class="max-w-md mx-auto" data-controller="carousel image-modal">
+  <%# --- 2. 画像カルーセル --- %>
+  <div class="relative w-full aspect-[3/4] bg-base-bg border-b border-base-border overflow-hidden">
+    <div class="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth" 
+          data-carousel-target="container" 
+          data-action="scroll->carousel#updateDots">
       <% if @item.images.attached? %>
-        <button class="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-white active:scale-95 transition-all text-[10px] font-bold uppercase tracking-widest shadow-lg"
-                data-action="click->image-modal#open"
-                data-image-modal-url-param="<%= Rails.env.test? ? rails_blob_path(@item.images.first, disposition: 'inline') : cl_image_path(@item.images.first.key, fetch_format: :auto, quality: :auto) %>">
-          <i class="bi bi-zoom-in text-sm text-accent"></i> 拡大
-        </button>
+        <% @item.images.each_with_index do |image, index| %>
+          <div class="w-full h-full flex-shrink-0 snap-center flex items-center justify-center p-2">
+            <%# 💡 image_tag を cl_image_tag に修正 %>
+            <% if Rails.env.test? %>
+              <%# テスト環境では image_tag を使用 %>
+              <%= image_tag rails_blob_path(image, disposition: "inline"), 
+                  class: "max-w-full max-h-full object-contain shadow-sm rounded-lg cursor-pointer active:scale-95 transition-transform",
+                  data: { 
+                    action: "click->image-modal#open",
+                    image_modal_url_param: rails_blob_path(image, disposition: "inline")
+                  } %>
+            <% else %>
+              <%# 本番環境では cl_image_tag を使用 %>
+              <%= cl_image_tag image.key, 
+                  transformation: [
+                    { width: 1200, height: 1200, crop: :limit },
+                    { fetch_format: :auto, quality: :auto }
+                  ],
+                  class: "max-w-full max-h-full object-contain shadow-sm rounded-lg cursor-pointer active:scale-95 transition-transform",
+                  data: { 
+                    action: "click->image-modal#open",
+                    image_modal_url_param: cl_image_path(image.key, fetch_format: :auto, quality: :auto)
+                  } %>
+            <% end %>
+          </div>
+        <% end %>
       <% end %>
     </div>
 
-    <%# --- 3. 情報エリア --- %>
-    <div class="px-5 py-8 flex flex-col gap-8">
-      <div class="flex flex-col gap-3">
-        <% if @item.category.present? %>
-          <div class="flex items-center justify-center h-8 px-5 rounded-full bg-accent text-primary self-start shadow-sm border border-accent/20">
-            <span class="text-[12px] font-black tracking-widest uppercase leading-none mt-[1px]"><%= @item.category.name %></span>
-          </div>
-        <% end %>
-        <h2 class="text-2xl font-black text-primary tracking-tight leading-tight px-1">
-          <%= @item.name %>
-        </h2>
-      </div>
-
-      <section>
-        <div class="flex items-center gap-2 mb-4 text-base-text">
-          <i class="bi bi-sticky-fill text-accent"></i>
-          <h2 class="text-[10px] font-black uppercase tracking-[0.2em] leading-none">Package Memo</h2>
-        </div>
-        <div class="bg-white rounded-2xl border border-base-border shadow-sm overflow-hidden min-h-[120px] flex flex-col">
-          <div class="px-6 py-6 flex-grow">
-            <p class="text-primary text-base leading-relaxed whitespace-pre-line font-medium tracking-tight">
-              <%= @item.memo.presence || "メモはありません。" %>
-            </p>
-          </div>
-          <div class="px-6 pb-4 flex justify-end">
-            <span class="text-[10px] text-base-text opacity-60 font-mono tracking-tighter italic">
-              <%= @item.updated_at.strftime("%Y.%m.%d %H:%M") %>
-            </span>
-          </div>
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <%# --- 4. 削除モーダル --- %>
-  <div id="delete-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-6 transition-all">
-    <div class="absolute inset-0 bg-primary/40 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
-    <div class="relative bg-white w-full max-w-xs rounded-[32px] overflow-hidden shadow-2xl">
-      <div class="pt-10 pb-6 px-6 text-center">
-        <div class="w-14 h-14 bg-danger-light text-danger rounded-full flex items-center justify-center mx-auto mb-5">
-          <i class="bi bi-trash-fill text-2xl"></i>
-        </div>
-        <h3 class="text-xl font-black text-primary mb-3">説明書を削除しますか？</h3>
-        <p class="text-[12px] text-base-text leading-relaxed font-bold opacity-60 px-2">削除したデータは元に戻せません。<br>このアイテムは完全に削除されます。</p>
-      </div>
-      <div class="flex border-t border-base-border h-16">
-        <button onclick="closeDeleteModal()" class="flex-1 text-primary text-sm font-black hover:bg-base-bg transition-colors border-r border-base-border">キャンセル</button>
-        <%= button_to item_path(@item), method: :delete, form_class: "flex-1 h-full", class: "w-full h-full text-white bg-primary text-sm font-black flex items-center justify-center" do %>
-          削除
+    <%# インジケータードット %>
+    <% if @item.images.attached? && @item.images.count > 1 %>
+      <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-sm z-20 border border-black/5">
+        <% @item.images.each_with_index do |_, index| %>
+          <div class="w-1.5 h-1.5 rounded-full transition-all duration-300" data-carousel-target="dot"></div>
         <% end %>
       </div>
-    </div>
+    <% end %>
+
+    <%# 拡大ボタン %>
+    <% if @item.images.attached? %>
+      <button class="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-white active:scale-95 transition-all text-[10px] font-bold uppercase tracking-widest shadow-lg"
+              data-action="click->image-modal#open"
+              data-image-modal-url-param="<%= Rails.env.test? ? rails_blob_path(@item.images.first, disposition: 'inline') : cl_image_path(@item.images.first.key, fetch_format: :auto, quality: :auto) %>">
+        <i class="bi bi-zoom-in text-sm text-accent"></i> 拡大
+      </button>
+    <% end %>
   </div>
 
-  <%# --- 5. 拡大モーダル --- %>
-  <div class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-xl transition-all overflow-hidden"
-        data-image-modal-target="modal">
-    <div class="absolute inset-0 w-full h-full flex items-center justify-center p-4 z-[205]" data-action="click->image-modal#close">
-      <img class="max-w-full max-h-full object-contain shadow-2xl animate-in zoom-in-95 duration-200 pointer-events-auto" 
-            data-image-modal-target="modalImage">
+  <%# --- 3. 情報エリア --- %>
+  <div class="px-5 py-8 flex flex-col gap-8">
+    <div class="flex flex-col gap-3">
+      <% if @item.category.present? %>
+        <div class="flex items-center justify-center h-8 px-5 rounded-full bg-accent text-primary self-start shadow-sm border border-accent/20">
+          <span class="text-[12px] font-black tracking-widest uppercase leading-none mt-[1px]"><%= @item.category.name %></span>
+        </div>
+      <% end %>
+      <h2 class="text-2xl font-black text-primary tracking-tight leading-tight px-1">
+        <%= @item.name %>
+      </h2>
     </div>
-    <button class="absolute top-8 right-8 text-white text-3xl z-[210] flex items-center justify-center w-12 h-12 rounded-full bg-black/40 backdrop-blur-md active:scale-90 transition-all border border-white/20"
-            data-action="click->image-modal#close">
-      <i class="bi bi-x-lg"></i>
-    </button>
+
+    <section>
+      <div class="flex items-center gap-2 mb-4 text-base-text">
+        <i class="bi bi-sticky-fill text-accent"></i>
+        <h2 class="text-[10px] font-black uppercase tracking-[0.2em] leading-none">Package Memo</h2>
+      </div>
+      <div class="bg-white rounded-2xl border border-base-border shadow-sm overflow-hidden min-h-[120px] flex flex-col">
+        <div class="px-6 py-6 flex-grow">
+          <p class="text-primary text-base leading-relaxed whitespace-pre-line font-medium tracking-tight">
+            <%= @item.memo.presence || "メモはありません。" %>
+          </p>
+        </div>
+        <div class="px-6 pb-4 flex justify-end">
+          <span class="text-[10px] text-base-text opacity-60 font-mono tracking-tighter italic">
+            <%= @item.updated_at.strftime("%Y.%m.%d %H:%M") %>
+          </span>
+        </div>
+      </div>
+    </section>
   </div>
+</main>
+
+<%# --- 4. 拡大モーダル --- %>
+<div class="hidden fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-xl transition-all overflow-hidden"
+      data-image-modal-target="modal">
+  <div class="absolute inset-0 w-full h-full flex items-center justify-center p-4 z-[205]" data-action="click->image-modal#close">
+    <img class="max-w-full max-h-full object-contain shadow-2xl animate-in zoom-in-95 duration-200 pointer-events-auto" 
+          data-image-modal-target="modalImage">
+  </div>
+  <button class="absolute top-8 right-8 text-white text-3xl z-[210] flex items-center justify-center w-12 h-12 rounded-full bg-black/40 backdrop-blur-md active:scale-90 transition-all border border-white/20"
+          data-action="click->image-modal#close">
+    <i class="bi bi-x-lg"></i>
+  </button>
 </div>
-
-<script>
-  function openDeleteModal() {
-    document.getElementById('delete-modal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeDeleteModal() {
-    document.getElementById('delete-modal').classList.add('hidden');
-    document.body.style.overflow = 'auto';
-  }
-</script>
 
 <%= render "shared/delete_item_modal", item: @item %>

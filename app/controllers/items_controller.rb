@@ -1,7 +1,7 @@
 class ItemsController < ApplicationController
   before_action :authenticate_user!
-  # 指定したアクションの前に、共通の「アイテム探し」をさせる
-  before_action :set_item, only: [ :show, :edit, :update, :destroy ]
+  # index と new 以外（つまり特定の1件を扱うアクション）で set_item を動かす
+  before_action :set_item, only: %i[show edit update destroy]
 
   def index
     @q = current_user.items.ransack(params[:q])
@@ -22,7 +22,6 @@ class ItemsController < ApplicationController
     @item = current_user.items.build(item_params)
 
     if @item.save
-      # 作成成功時は詳細画面(show)へ飛ばすのが一般的です
       redirect_to item_path(@item), notice: "登録しました"
     else
       # エラー時はnew画面を再表示
@@ -34,8 +33,6 @@ class ItemsController < ApplicationController
   end
 
   def update
-    # 画像が送られてきていない（空の）場合は、パラメータから images を除外する
-    # これにより、Active Storage が勝手に画像を削除するのを防ぎます
     filtered_params = item_params
     if params[:item][:images].blank? || params[:item][:images].all?(&:blank?)
       filtered_params = filtered_params.except(:images)
@@ -59,9 +56,10 @@ class ItemsController < ApplicationController
   private
 
   def set_item
+    # 🌟 ログインしている自分の説明書の中から探す
     @item = current_user.items.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to items_path, alert: "指定されたアイテムが見つかりません。"
+    redirect_to items_path, alert: "指定されたアイテムが見つかりません、または権限がありません。"
   end
 
   def item_params
