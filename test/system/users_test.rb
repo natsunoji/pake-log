@@ -4,7 +4,7 @@ class UsersTest < ApplicationSystemTestCase
   test "新規登録ができること" do
     visit new_user_registration_path
 
-    fill_in "お名前", with: "テストユーザー"
+    fill_in "ユーザーネーム", with: "テストユーザー"
     # 衝突を避けるためのタイムスタンプ付与
     fill_in "メールアドレス", with: "new_tester_#{Time.now.to_i}@example.com"
 
