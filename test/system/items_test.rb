@@ -40,7 +40,9 @@ class ItemsTest < ApplicationSystemTestCase
                   Rails.root.join("test/fixtures/files/test_image.png"),
                   visible: false
 
-      find('input[type="submit"]').scroll_to.click
+      submit_button = find('input[type="submit"]')
+      submit_button.at_js.scroll_into_view
+      submit_button.click
 
       assert_text "名前を入力してください"
     end

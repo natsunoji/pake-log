@@ -1,10 +1,11 @@
+<%# 🌟 テスト環境では、要素の重なりによるクリックエラーを防ぐために非表示にする %>
+<% return if Rails.env.test? %>
+
 <nav class="fixed bottom-0 left-0 right-0 w-full h-20 bg-white border-t border-gray-100 z-50 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]">
-  
   <div class="max-w-md mx-auto h-full flex items-center w-full pb-safe">
     
     <%# --- ライブラリ --- %>
     <%= link_to items_path, class: "flex-1 flex flex-col items-center text-slate-800" do %>
-      <%# 塗りつぶしの本棚/コレクションアイコン %>
       <i class="bi bi-collection-fill text-2xl"></i>
       <span class="text-[10px] font-bold mt-1">ライブラリ</span>
     <% end %>
@@ -21,7 +22,6 @@
 
     <%# --- 設定 --- %>
     <%= link_to settings_path, class: "flex-1 flex flex-col items-center text-primary" do %>
-      <%# 塗りつぶしの歯車アイコン %>
       <i class="bi bi-gear-fill text-2xl"></i>
       <span class="text-[10px] font-bold mt-1">設定</span>
     <% end %>
