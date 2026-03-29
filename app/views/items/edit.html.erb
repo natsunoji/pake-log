@@ -1,5 +1,5 @@
-<div class="px-6 py-8">
-  <%= form_with(model: @item, data: { turbo: true, action: "submit->input-images#syncInput" }, multipart: true) do |f| %>
+<div class="px-6 py-8 pb-32">
+  <%= form_with(model: @item, data: { turbo: true, action: "submit->input-images#syncToInput" }, multipart: true) do |f| %>
 
     <%# エラーメッセージ %>
     <div id="item_error_messages">
@@ -60,31 +60,43 @@
             <div class="relative aspect-square rounded-2xl overflow-hidden border-2 border-dashed border-base-border bg-base-bg flex items-center justify-center text-gray-300" 
                 data-input-images-target="previewBox">
               
-              <%# 既存画像がある場合は Cloudinary で表示 %>
               <% if attached_image.present? %>
+                <%# 🌟 JSでIDを取得するためのデータ属性 %>
+                <div class="hidden" data-image-id="<%= attached_image.id %>"></div>
+                
                 <%= cl_image_tag attached_image.key, 
-                    width: 500, 
-                    height: 500, 
-                    crop: :limit,
+                    width: 500, height: 500, crop: :limit,
                     class: "absolute inset-0 w-full h-full object-cover",
                     data: { input_images_target: "image" } %>
+                
+                <button type="button" 
+                        class="absolute top-1 right-1 h-6 w-6 rounded-full bg-danger text-white flex items-center justify-center shadow-md z-10"
+                        data-action="click->input-images#remove"
+                        data-input-images-target="removeButton"
+                        data-index="<%= index %>">
+                  <i class="bi bi-x text-lg"></i>
+                </button>
+                
+                <%# 🌟 既存画像ブロックにもアイコンを隠した状態で配置 %>
+                <i class="bi bi-image text-2xl hidden" data-input-images-target="placeholderIcon"></i>
+
+                <div class="absolute bottom-0 left-0 right-0 bg-primary/70 backdrop-blur-[2px] py-1 text-center <%= index == 0 ? '' : 'hidden' %>" data-input-images-target="coverLabel">
+                  <span class="text-[9px] font-bold text-white uppercase tracking-tighter leading-none">カバー画像</span>
+                </div>
               <% else %>
                 <img class="hidden absolute inset-0 w-full h-full object-cover" data-input-images-target="image">
-              <% end %>
-              
-              <%# 削除ボタン（新規作成画面に合わせて data-input-images-target="removeButton" を追加） %>
-              <button type="button" 
-                      class="<%= attached_image.present? ? '' : 'hidden' %> absolute top-1 right-1 h-6 w-6 rounded-full bg-danger text-white flex items-center justify-center shadow-md z-10"
-                      data-action="click->input-images#remove"
-                      data-input-images-target="removeButton"
-                      data-index="<%= index %>">
-                <i class="bi bi-x text-lg"></i>
-              </button>
+                
+                <button type="button" 
+                        class="hidden absolute top-1 right-1 h-6 w-6 rounded-full bg-danger text-white flex items-center justify-center shadow-md z-10"
+                        data-action="click->input-images#remove"
+                        data-input-images-target="removeButton"
+                        data-index="<%= index %>">
+                  <i class="bi bi-x text-lg"></i>
+                </button>
+                
+                <i class="bi bi-image text-2xl" data-input-images-target="placeholderIcon"></i>
 
-              <i class="bi bi-image text-2xl <%= attached_image.present? ? 'hidden' : '' %>" data-input-images-target="placeholderIcon"></i>
-              
-              <% if index == 0 %>
-                <div class="<%= attached_image.present? ? '' : 'hidden' %> absolute bottom-0 left-0 right-0 bg-primary/70 backdrop-blur-[2px] py-1 text-center" data-input-images-target="coverLabel">
+                <div class="hidden absolute bottom-0 left-0 right-0 bg-primary/70 backdrop-blur-[2px] py-1 text-center" data-input-images-target="coverLabel">
                   <span class="text-[9px] font-bold text-white uppercase tracking-tighter leading-none">カバー画像</span>
                 </div>
               <% end %>
@@ -94,7 +106,7 @@
       </div>
     </div>
 
-    <%# 名前入力 %>
+    <%# --- 入力項目エリア（デザインそのまま） --- %>
     <div class="mb-6">
       <div class="flex items-center mb-1.5 ml-1">
         <%= f.label :name, "パケの名前", class: "text-sm font-bold text-primary" %>
@@ -103,7 +115,6 @@
       <%= f.text_field :name, placeholder: "例：サプリメント（メーカー））", class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold" %>
     </div>
 
-    <%# カテゴリ選択 %>
     <div class="mb-6">
       <div class="flex items-center mb-1.5 ml-1">
         <%= f.label :category_id, "カテゴリ", class: "text-sm font-bold text-primary" %>
@@ -116,7 +127,6 @@
       </div>
     </div>
 
-    <%# メモ入力 %>
     <div class="mb-8 overflow-hidden rounded-2xl border border-base-border">
       <div class="flex items-center py-3.5 px-5 bg-base-bg/50 border-b border-base-border">
         <%= f.label :memo, "メモ", class: "text-sm font-bold text-primary" %>
@@ -124,15 +134,13 @@
       <%= f.text_area :memo, placeholder: "購入日、場所など...", rows: 3, class: "w-full px-5 py-4 border-none text-primary text-base focus:ring-0 resize-none h-32" %>
     </div>
 
-    <%# 警告メッセージ（新規作成画面に合わせて追加） %>
     <div class="bg-warning-bg rounded-xl p-4 flex items-center space-x-3 mb-10 border border-warning-border">
       <i class="bi bi-exclamation-triangle-fill text-xl text-warning-icon"></i>
       <p class="text-[10px] leading-tight text-warning-text font-bold">クレカ番号やマイナンバー等の<br>個人情報は登録しないでください。</p>
     </div>
 
-    <%# 送信ボタン %>
-    <div class="relative z-10">
-      <%= f.submit "変更を保存する", class: "w-full bg-primary text-white font-black py-5 rounded-full text-lg shadow-lg active:translate-y-0.5 transition-all tracking-widest" %>
+    <div>
+      <%= f.submit "変更を保存する", class: "w-full bg-primary text-white font-black py-5 rounded-full text-lg shadow-lg active:translate-y-0.5 transition-all tracking-widest cursor-pointer" %>
     </div>
   <% end %>
 </div>

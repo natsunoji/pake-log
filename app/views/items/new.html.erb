@@ -1,5 +1,6 @@
-<div class="px-6 py-8">
-  <%= form_with(model: @item, data: { turbo: true, action: "submit->input-images#syncInput" }, multipart: true) do |f| %>
+<div class="px-6 py-8 pb-32"> <%# 🌟 pb-32 を追加（ボトムナビ対策） %>
+  <%# 🌟 アクション名を syncInput から syncToInput に修正 %>
+  <%= form_with(model: @item, data: { turbo: true, action: "submit->input-images#syncToInput" }, multipart: true) do |f| %>
 
     <%# エラーメッセージ %>
     <div id="item_error_messages">
@@ -14,7 +15,7 @@
       <% end %>
     </div>
 
-    <%# ---  画像エリア --- %>
+    <%# --- 画像エリア --- %>
     <div class="mb-8" data-controller="input-images">
       <div class="flex items-center justify-between mb-4 ml-1">
         <div class="flex items-baseline">
@@ -60,7 +61,6 @@
                 data-input-images-target="previewBox">
               <img class="hidden absolute inset-0 w-full h-full object-cover" data-input-images-target="image">
               
-              <%# 🌟 修正ポイント：data-input-images-target="removeButton" を追加 %>
               <button type="button" 
                       class="hidden absolute top-1 right-1 h-6 w-6 rounded-full bg-danger text-white flex items-center justify-center shadow-md z-10"
                       data-action="click->input-images#remove"
@@ -81,7 +81,7 @@
       </div>
     </div>
 
-    <%# --- 3. 入力項目エリア --- %>
+    <%# --- 入力項目エリア --- %>
     <div class="mb-6">
       <div class="flex items-center mb-1.5 ml-1">
         <%= f.label :name, "パケの名前", class: "text-sm font-bold text-primary" %>
@@ -115,7 +115,7 @@
     </div>
 
     <div class="relative z-10">
-      <%= f.submit "この内容で登録する", class: "w-full bg-primary text-white font-black py-5 rounded-full text-lg shadow-lg active:translate-y-0.5 transition-all tracking-widest" %>
+      <%= f.submit "この内容で登録する", class: "w-full bg-primary text-white font-black py-5 rounded-full text-lg shadow-lg active:translate-y-0.5 transition-all tracking-widest cursor-pointer" %>
     </div>
   <% end %>
 </div>
