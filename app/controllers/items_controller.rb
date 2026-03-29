@@ -30,37 +30,47 @@ class ItemsController < ApplicationController
   end
 
   def update
-    # 🌟 トランザクション処理で、画像削除・追加・基本情報の更新をセットで行う
+    # 🌟 1. 事前チェック：最終的な画像枚数が0枚にならないか確認
+    delete_ids = params[:item][:delete_image_ids] || []
+    new_images = params[:item][:images]&.reject(&:blank?) || []
+
+    # 計算：現在の枚数 - 削除予定枚数 + 追加予定枚数
+    final_count = @item.images.count - delete_ids.count + new_images.count
+
+    if final_count < 1
+      @item.errors.add(:images, "を1枚以上選択してください")
+      render :edit, status: :unprocessable_entity
+      return # 処理を中断してここで編集画面に戻す
+    end
+
+    # 🌟 2. チェックを通過した場合のみ、一連の更新処理を実行
     ActiveRecord::Base.transaction do
-      # 1. 既存画像の削除処理
-      if params[:item][:delete_image_ids].present?
-        params[:item][:delete_image_ids].each do |image_id|
+      # 既存画像の物理削除
+      if delete_ids.present?
+        delete_ids.each do |image_id|
           image = @item.images.find_by(id: image_id)
           image.purge if image
         end
       end
 
-      # 2. 新規画像の追加処理（JS側で3枚制限されているが、念のためサーバー側でもガード）
-      if params[:item][:images].present?
-        new_images = params[:item][:images].reject(&:blank?)
+      # 新規画像の追加
+      if new_images.present?
+        # 削除後の最新の枚数を再計算
         available_slots = 3 - @item.images.count
-
         if available_slots > 0
-          images_to_attach = new_images.first(available_slots)
-          @item.images.attach(images_to_attach)
+          @item.images.attach(new_images.first(available_slots))
         end
       end
 
-      # 3. 基本情報の更新（images, delete_image_ids は既に処理済みなので除外）
+      # 基本情報の更新（images, delete_image_ids は既に処理済みなので除外）
       if @item.update(item_params.except(:images, :delete_image_ids))
         redirect_to item_path(@item), notice: "更新しました"
       else
-        # バリデーションエラー時はトランザクションをロールバックさせる
+        # 名前やカテゴリのバリデーションエラー時はトランザクションをロールバック
         raise ActiveRecord::Rollback
       end
     end
   rescue ActiveRecord::Rollback
-    # ロールバック後に編集画面を再表示
     render :edit, status: :unprocessable_entity
   end
 

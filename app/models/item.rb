@@ -2,15 +2,15 @@ class Item < ApplicationRecord
   belongs_to :user
   belongs_to :category, optional: true
 
-  # 💡 修正ポイント：
-  # block（do...end）を削除し、純粋に添付ファイルがあることだけを定義します。
-  # 以前書いていた variant の設定は、すべて View 側の cl_image_tag に移行したので、ここでは不要です。
+  # 添付ファイルの設定
   has_many_attached :images
 
+  # 基本バリデーション
   validates :name, presence: true, length: { maximum: 40 }
   validates :name, uniqueness: { scope: :user_id }
   validates :memo, length: { maximum: 255 }
 
+  # 🌟 画像のバリデーション（新規・編集共通）
   validate :images_presence_and_count
 
   def cover_image
@@ -21,6 +21,7 @@ class Item < ApplicationRecord
     images.offset(1)
   end
 
+  # Ransack用設定
   def self.ransackable_attributes(auth_object = nil)
     [ "name", "category_id", "created_at" ]
   end
@@ -34,10 +35,10 @@ class Item < ApplicationRecord
   def images_presence_and_count
     if images.attached?
       if images.count > 3
-        errors.add(:base, "画像は最大3枚までです。")
+        errors.add(:images, "は最大3枚までです。")
       end
     else
-      errors.add(:base, "画像を1枚以上選択してください。")
+      errors.add(:images, "を1枚以上選択してください。")
     end
   end
 end
