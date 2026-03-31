@@ -154,3 +154,6 @@ Figma：<https://www.figma.com/design/aw0k9A9gx5GBcN2zVT66NZ/%E5%8D%92%E6%A5%AD%
 
 ### 12.ER図
 ![ER図](https://gyazo.com/e401778e78b5c8ca8fe0d3602c6be03f.png)
+
+### 参考資料
+PRD：<https://docs.google.com/document/d/11QHxyRknSRpW0Zmnqm6qwUHoi_BEPXWFMw91l6sbV18/edit?tab=t.gtiq9ypbitum#heading=h.br1xudy1p4ns>
