@@ -2,6 +2,19 @@
 <html class="h-full">
   <head>
     <title>PakeLog</title>
+
+    <%# --- Google Analytics 4 (GA4) --- %>
+    <% if Rails.env.production? %>
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-GT0E2E9RMM"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-GT0E2E9RMM');
+      </script>
+    <% end %>
+
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     
     <%# --- フォント & アイコン --- %>
