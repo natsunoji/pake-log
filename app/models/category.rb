@@ -1,8 +1,12 @@
 class Category < ApplicationRecord
+  # ranked-modelの機能を読み込む
+  include RankedModel
+  # row_orderカラムを使用して並び順を管理。user_idごとに順序を独立させる
+  ranks :row_order, with_same: :user_id
+
   belongs_to :user
-  has_many :items, dependent: :restrict_with_error # アイテムがある場合消せない
+  has_many :items, dependent: :restrict_with_error
 
   validates :name, presence: true, length: { maximum: 20 }
-  # ユーザーごとに名前がユニークであること
   validates :name, uniqueness: { scope: :user_id }
 end

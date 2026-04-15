@@ -1,0 +1,57 @@
+<div id="category-delete-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-6 transition-all">
+  <div class="absolute inset-0 bg-primary/40 backdrop-blur-sm" onclick="closeCategoryDeleteModal()"></div>
+  
+  <div class="relative bg-white w-full max-w-xs rounded-[32px] overflow-hidden shadow-2xl">
+    <div class="pt-10 pb-6 px-6 text-center">
+      <div class="w-14 h-14 bg-danger-light text-danger rounded-full flex items-center justify-center mx-auto mb-5 border border-danger/10">
+        <i class="bi bi-trash3-fill text-2xl"></i>
+      </div>
+      
+      <h3 class="text-xl font-black text-primary mb-3">カテゴリを削除？</h3>
+      <p class="text-[12px] text-base-text leading-relaxed font-bold opacity-60 px-2">
+        「<span id="modal-category-name"></span>」を削除しますか？<br>
+        アイテムが紐付いている場合は削除できません。
+      </p>
+    </div>
+    
+    <div class="flex border-t border-base-border h-16">
+      <button onclick="closeCategoryDeleteModal()" class="flex-1 text-primary text-sm font-black hover:bg-base-bg transition-colors border-r border-base-border cursor-pointer">
+        キャンセル
+      </button>
+      
+      <%= button_to "", method: :delete, id: "modal-delete-link", 
+          form_class: "flex-1 h-full", 
+          class: "w-full h-full text-white bg-danger text-sm font-black flex items-center justify-center active:opacity-90 transition-opacity cursor-pointer" do %>
+        削除する
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openCategoryDeleteModal(name, url) {
+    const modal = document.getElementById('category-delete-modal');
+    const nameSpan = document.getElementById('modal-category-name');
+    const deleteButton = document.getElementById('modal-delete-link');
+    const deleteForm = deleteButton ? deleteButton.closest('form') : null;
+    
+    if (modal && nameSpan && deleteForm) {
+      nameSpan.textContent = name;
+      deleteForm.action = url;
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeCategoryDeleteModal() {
+    const modal = document.getElementById('category-delete-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  document.addEventListener("turbo:before-cache", function() {
+    closeCategoryDeleteModal();
+  });
+</script>

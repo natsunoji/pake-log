@@ -1,0 +1,64 @@
+<% content_for :head do %>
+  <meta name="turbo-cache-control" content="no-cache">
+<% end %>
+<div class="min-h-screen pb-40 font-sans antialiased text-primary">
+  <%# pt-2 でヘッダーとの余白を最小化 %>
+  <div class="px-4 pt-2 pb-6 max-w-md mx-auto">
+    
+    <%# --- 1. 新規追加フォーム --- %>
+    <div class="bg-white p-6 rounded-3xl shadow-sm mb-8 border border-base-border/30">
+      <p class="text-[10px] font-black text-base-text opacity-50 uppercase tracking-widest mb-4 px-1">新しいカテゴリを追加</p>
+      <%= form_with(model: @category, class: "space-y-3") do |f| %>
+        <div class="flex gap-2">
+          <%= f.text_field :name, placeholder: "カテゴリ名を入力...", 
+              class: "flex-grow px-5 py-4 rounded-2xl bg-gray-50 border-none text-sm font-bold focus:ring-2 focus:ring-accent transition-all placeholder:text-gray-300 shadow-inner" %>
+          <%= f.submit "追加", 
+              class: "bg-primary text-white px-6 rounded-2xl font-black shadow-lg active:scale-95 transition-all text-sm" %>
+        </div>
+      <% end %>
+    </div>
+
+    <%# --- 2. カテゴリ一覧 --- %>
+    <div class="flex items-center justify-between mb-4 px-2">
+      <p class="text-[10px] font-black text-base-text opacity-50 uppercase tracking-widest">カテゴリ一覧</p>
+      <span class="text-[10px] font-bold text-gray-300">全 <%= @categories.count %> 件</span>
+    </div>
+
+    <%# 🌟 data-controller="sortable" を追加してJSを起動 %>
+    <div class="space-y-3" data-controller="sortable">
+      <% @categories.each do |category| %>
+        <% next if category.new_record? %>
+        
+        <%# 🌟 data-sortable-url を追加して並び替え後の保存先を指示 %>
+        <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-transparent active:bg-gray-50 transition-colors"
+             data-sortable-url="<%= category_path(category) %>">
+          
+          <div class="flex items-center gap-4 pl-1">
+            <%# 🌟 掴み手（ハンドル）を追加。このエリアをドラッグすると動く %>
+            <div class="drag-handle cursor-grab active:cursor-grabbing text-gray-300 py-1 pr-1">
+              <i class="bi bi-grip-vertical text-2xl"></i>
+            </div>
+            
+            <span class="font-bold text-primary tracking-tight"><%= category.name %></span>
+          </div>
+          
+          <div class="flex items-center gap-1">
+            <%= link_to edit_category_path(category), class: "w-10 h-10 flex items-center justify-center text-gray-300 active:scale-90 transition-all" do %>
+              <i class="bi bi-pencil-square text-lg"></i>
+            <% end %>
+            
+            <%# カスタムモーダルを起動 %>
+            <button type="button" 
+                    onclick="openCategoryDeleteModal('<%= category.name %>', '<%= category_path(category) %>')"
+                    class="w-10 h-10 flex items-center justify-center text-gray-300 active:text-red-500 active:scale-90 transition-all">
+              <i class="bi bi-trash3 text-lg"></i>
+            </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%# モーダルコンポーネントを呼び出し %>
+<%= render 'shared/category_delete_modal' %>
