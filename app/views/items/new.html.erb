@@ -1,4 +1,4 @@
-<div class="px-6 py-8 pb-32"> <%# 🌟 pb-32 を追加（ボトムナビ対策） %>
+<div class="px-6 py-8 pb-32">
   <%# 🌟 アクション名を syncInput から syncToInput に修正 %>
   <%= form_with(model: @item, data: { turbo: true, action: "submit->input-images#syncToInput" }, multipart: true) do |f| %>
 
@@ -26,10 +26,11 @@
       </div>
 
       <div class="hidden">
+        <%# accept属性でGIFを除外し、iOS Chrome向けにカンマ後のスペースを詰める %>
         <%= f.file_field :images, 
             multiple: true, 
             data: { input_images_target: "input", action: "change->input-images#preview" }, 
-            accept: "image/*",
+            accept: "image/png,image/jpeg",
             id: "item_image_input" %>
       </div>
 
