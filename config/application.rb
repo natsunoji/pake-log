@@ -14,5 +14,10 @@ module PakeLog
 
     # Cloudinaryが提供する加工パラメータをActive Storageがそのまま通すようにする
     config.active_storage.track_variants = true
+
+    # 日本標準時に設定
+    config.time_zone = "Tokyo"
+    # DBの保存時刻もJST（日本時間）に合わせる
+    config.active_record.default_timezone = :local
   end
 end
