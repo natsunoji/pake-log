@@ -24,7 +24,7 @@ class Item < ApplicationRecord
 
   # Ransack用設定
   def self.ransackable_attributes(auth_object = nil)
-    [ "name", "category_id", "created_at" ]
+    [ "name", "category_id", "memo", "created_at" ]
   end
 
   def self.ransackable_associations(auth_object = nil)
