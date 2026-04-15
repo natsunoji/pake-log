@@ -26,13 +26,12 @@
       <span class="text-[10px] font-bold text-gray-300">全 <%= @categories.count %> 件</span>
     </div>
 
-    <%# JSエラー対策のため一時的に data-controller を外してもよいが、一旦そのまま %>
     <div class="space-y-3" data-controller="sortable">
       <% @categories.each do |category| %>
         <% next if category.new_record? %>
         
         <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-transparent active:bg-gray-50 transition-colors"
-             data-sortable-url="<%= category_path(category) %>">
+            data-sortable-url="<%= category_path(category) %>">
           
           <div class="flex items-center gap-4 pl-1">
             <div class="drag-handle cursor-grab active:cursor-grabbing text-gray-300 py-1 pr-1">
@@ -46,19 +45,11 @@
               <i class="bi bi-pencil-square text-lg"></i>
             <% end %>
             
-            <%# 🌟 修正箇所：JS依存のモーダルボタンをコメントアウト %>
-            <%# <button type="button" 
+            <button type="button" 
                     onclick="openCategoryDeleteModal('<%= category.name %>', '<%= category_path(category) %>')"
                     class="w-10 h-10 flex items-center justify-center text-gray-300 active:text-red-500 active:scale-90 transition-all">
               <i class="bi bi-trash3 text-lg"></i>
-            </button> %>
-
-            <%# 🌟 修正箇所：Rails標準の削除ボタンを復活（JSが死んでいても動く） %>
-            <%= button_to category_path(category), method: :delete, 
-                form: { data: { turbo_confirm: "#{category.name}を削除してよろしいですか？" } },
-                class: "w-10 h-10 flex items-center justify-center text-gray-300 active:text-red-500 transition-all" do %>
-              <i class="bi bi-trash3 text-lg"></i>
-            <% end %>
+            </button>
           </div>
         </div>
       <% end %>
@@ -66,5 +57,4 @@
   </div>
 </div>
 
-<%# モーダルは一旦呼び出さない %>
-<%# render 'shared/category_delete_modal' %>
+<%= render 'shared/category_delete_modal' %>
