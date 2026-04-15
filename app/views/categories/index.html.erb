@@ -1,8 +1,10 @@
+<%# app/views/categories/index.html.erb %>
+
 <% content_for :head do %>
   <meta name="turbo-cache-control" content="no-cache">
 <% end %>
+
 <div class="min-h-screen pb-40 font-sans antialiased text-primary">
-  <%# pt-2 でヘッダーとの余白を最小化 %>
   <div class="px-4 pt-2 pb-6 max-w-md mx-auto">
     
     <%# --- 1. 新規追加フォーム --- %>
@@ -24,21 +26,18 @@
       <span class="text-[10px] font-bold text-gray-300">全 <%= @categories.count %> 件</span>
     </div>
 
-    <%# 🌟 data-controller="sortable" を追加してJSを起動 %>
+    <%# JSエラー対策のため一時的に data-controller を外してもよいが、一旦そのまま %>
     <div class="space-y-3" data-controller="sortable">
       <% @categories.each do |category| %>
         <% next if category.new_record? %>
         
-        <%# 🌟 data-sortable-url を追加して並び替え後の保存先を指示 %>
         <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-transparent active:bg-gray-50 transition-colors"
              data-sortable-url="<%= category_path(category) %>">
           
           <div class="flex items-center gap-4 pl-1">
-            <%# 🌟 掴み手（ハンドル）を追加。このエリアをドラッグすると動く %>
             <div class="drag-handle cursor-grab active:cursor-grabbing text-gray-300 py-1 pr-1">
               <i class="bi bi-grip-vertical text-2xl"></i>
             </div>
-            
             <span class="font-bold text-primary tracking-tight"><%= category.name %></span>
           </div>
           
@@ -47,12 +46,19 @@
               <i class="bi bi-pencil-square text-lg"></i>
             <% end %>
             
-            <%# カスタムモーダルを起動 %>
-            <button type="button" 
+            <%# 🌟 修正箇所：JS依存のモーダルボタンをコメントアウト %>
+            <%# <button type="button" 
                     onclick="openCategoryDeleteModal('<%= category.name %>', '<%= category_path(category) %>')"
                     class="w-10 h-10 flex items-center justify-center text-gray-300 active:text-red-500 active:scale-90 transition-all">
               <i class="bi bi-trash3 text-lg"></i>
-            </button>
+            </button> %>
+
+            <%# 🌟 修正箇所：Rails標準の削除ボタンを復活（JSが死んでいても動く） %>
+            <%= button_to category_path(category), method: :delete, 
+                form: { data: { turbo_confirm: "#{category.name}を削除してよろしいですか？" } },
+                class: "w-10 h-10 flex items-center justify-center text-gray-300 active:text-red-500 transition-all" do %>
+              <i class="bi bi-trash3 text-lg"></i>
+            <% end %>
           </div>
         </div>
       <% end %>
@@ -60,5 +66,5 @@
   </div>
 </div>
 
-<%# モーダルコンポーネントを呼び出し %>
-<%= render 'shared/category_delete_modal' %>
+<%# モーダルは一旦呼び出さない %>
+<%# render 'shared/category_delete_modal' %>
