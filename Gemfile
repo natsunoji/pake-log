@@ -38,7 +38,8 @@ gem "image_processing", "~> 1.2"
 
 gem "ransack", "~> 4.2"
 
-# 🌟 ここに追加しました 🌟
+gem "ranked-model"
+
 group :development, :test do
   # .env ファイルから環境変数を読み込むための gem
   gem "dotenv-rails"

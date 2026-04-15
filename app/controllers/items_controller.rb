@@ -9,7 +9,7 @@ class ItemsController < ApplicationController
                 .order(updated_at: :desc)
 
     # ビューで使用するカテゴリ一覧を、ログインユーザーのものに限定して取得
-    @categories = current_user.categories.distinct
+    @categories = current_user.categories.rank(:row_order)
     end
 
   def show

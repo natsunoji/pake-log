@@ -76,6 +76,8 @@
           p_back = user_signed_in? ? settings_path : root_path
         when 'registrations', 'profiles'
           p_title, p_back = ["プロフィール編集", settings_path]
+        when 'categories'
+          p_title, p_back = ["カテゴリの設定", items_path]
         else
           p_title, p_back = ["PakeLog", root_path]
         end

@@ -1,3 +1,6 @@
+<% content_for :head do %>
+  <meta name="turbo-visit-control" content="reload">
+<% end %>
 <div class="bg-gray-100 min-h-screen font-sans antialiased text-primary">
   
   <%# --- 1. ヘッダー & カテゴリタブエリア --- %>
@@ -23,24 +26,32 @@
       </div>
     <% end %>
   </div>
+
   <%# アイテムが存在するとき、または検索・フィルタリング中の時だけタブを表示 %>
   <% if @items.any? || params[:q].present? %>
     <div class="bg-white/95 backdrop-blur-md border-b border-base-border/50 sticky top-16 z-30 pb-3 pt-2">
-      <div class="flex overflow-x-auto space-x-2 px-3 no-scrollbar">
-        <% all_active = params[:q].blank? || params.dig(:q, :category_id_eq).blank? %>
-        <%= link_to items_path, 
-            class: "#{all_active ? 'bg-accent border-accent' : 'bg-gray-100 border-transparent'} text-primary px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95" do %>
-          全て
-        <% end %>
-
-        <% @categories.each do |category| %>
-          <%# 判定をより堅牢にするため .to_s を使用 %>
-          <% is_active = params.dig(:q, :category_id_eq).to_s == category.id.to_s %>
-          
-          <%= link_to items_path(q: { category_id_eq: category.id }), 
-              class: "#{is_active ? 'bg-accent border-accent' : 'bg-gray-100 border-transparent'} text-primary px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95" do %>
-            <%= category.name %>
+      <div class="flex items-center px-3 gap-2">
+        <%# --- カテゴリタブ（スクロールエリア） --- %>
+        <div class="flex-grow flex overflow-x-auto space-x-2 no-scrollbar">
+          <% all_active = params[:q].blank? || params.dig(:q, :category_id_eq).blank? %>
+          <%= link_to items_path, 
+              class: "#{all_active ? 'bg-accent border-accent' : 'bg-gray-100 border-transparent'} text-primary px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95" do %>
+            全て
           <% end %>
+
+          <% @categories.each do |category| %>
+            <% is_active = params.dig(:q, :category_id_eq).to_s == category.id.to_s %>
+            <%= link_to items_path(q: { category_id_eq: category.id }), 
+                class: "#{is_active ? 'bg-accent border-accent' : 'bg-gray-100 border-transparent'} text-primary px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95" do %>
+              <%= category.name %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <%# --- カテゴリ管理ボタン（固定配置） --- %>
+        <%= link_to categories_path, 
+            class: "flex-shrink-0 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-primary shadow-sm active:scale-90 transition-all border border-transparent" do %>
+          <i class="bi bi-gear-fill"></i>
         <% end %>
       </div>
     </div>

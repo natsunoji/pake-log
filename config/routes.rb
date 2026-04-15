@@ -19,7 +19,10 @@ Rails.application.routes.draw do
   # 3. アイテムに関するルート
   resources :items
 
-  # 4. ログイン状態によるルートの出し分け
+  # 4. カテゴリに関するルートを追加
+  resources :categories, only: [ :index, :create, :edit, :update, :destroy ]
+
+  # 5. ログイン状態によるルートの出し分け
   authenticated :user do
     root "items#index", as: :authenticated_root
   end
