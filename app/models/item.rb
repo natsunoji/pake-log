@@ -12,6 +12,7 @@ class Item < ApplicationRecord
 
   # 🌟 画像のバリデーション（新規・編集共通）
   validate :images_presence_and_count
+  validate :validate_images_format
 
   def cover_image
     images.first
@@ -39,6 +40,17 @@ class Item < ApplicationRecord
       end
     else
       errors.add(:images, "を1枚以上選択してください。")
+    end
+  end
+
+  def validate_images_format
+    return unless images.attached?
+
+    images.each do |image|
+      # image/gif が含まれていたらエラーを追加する
+      if image.content_type == "image/gif"
+        errors.add(:images, "にGIF形式は使用できません。JPEGまたはPNG形式を選択してください")
+      end
     end
   end
 end

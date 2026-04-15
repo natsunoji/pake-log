@@ -41,11 +41,24 @@ export default class extends Controller {
     const newFiles = Array.from(this.inputTarget.files)
     if (newFiles.length === 0) return
 
+    // 🌟 GIFをフロントエンドでフィルタリング
+    const validFiles = newFiles.filter(file => {
+      if (file.type === "image/gif") {
+        alert("GIF形式の画像はアップロードできません。")
+        return false
+      }
+      return true
+    })
+
+    // 🌟 フィルタリング後のファイルがゼロなら終了
+    if (validFiles.length === 0) return
+
     const totalCount = this.allImages.length + this.newFiles.length
     const availableSlots = 3 - totalCount
     if (availableSlots <= 0) return
 
-    const filesToAdd = newFiles.slice(0, availableSlots)
+    // 🌟 修正箇所：newFiles ではなく validFiles を slice する
+    const filesToAdd = validFiles.slice(0, availableSlots)
     this.newFiles = [...this.newFiles, ...filesToAdd]
     
     this.renderAll()

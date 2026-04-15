@@ -25,10 +25,11 @@
       </div>
 
       <div class="hidden">
+        <%# accept属性でGIFを除外し、iOS Chrome向けにカンマ後のスペースを詰める %>
         <%= f.file_field :images, 
             multiple: true, 
             data: { input_images_target: "input", action: "change->input-images#preview" }, 
-            accept: "image/*",
+            accept: "image/png,image/jpeg",
             id: "item_image_input" %>
       </div>
 
