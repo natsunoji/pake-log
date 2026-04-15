@@ -7,7 +7,10 @@ class ItemsController < ApplicationController
     @items = @q.result(distinct: true)
                 .includes(:category, images_attachments: :blob)
                 .order(updated_at: :desc)
-  end
+
+    # ビューで使用するカテゴリ一覧を、ログインユーザーのものに限定して取得
+    @categories = current_user.categories.distinct
+    end
 
   def show
   end

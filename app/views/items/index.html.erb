@@ -13,8 +13,10 @@
           全て
         <% end %>
 
-        <% current_user.categories.each do |category| %>
+        <% @categories.each do |category| %>
+          <%# 判定をより堅牢にするため .to_s を使用 %>
           <% is_active = params.dig(:q, :category_id_eq).to_s == category.id.to_s %>
+          
           <%= link_to items_path(q: { category_id_eq: category.id }), 
               class: "#{is_active ? 'bg-accent border-accent' : 'bg-gray-100 border-transparent'} text-primary px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95" do %>
             <%= category.name %>
