@@ -3,6 +3,26 @@
   <%# --- 1. ヘッダー & カテゴリタブエリア --- %>
   <%= render 'shared/header' %>
 
+  <div class="px-3 pt-4 mb-2">
+    <%= search_form_for @q, url: items_path, method: :get do |f| %>
+      <div class="relative group">
+        <%# 虫眼鏡アイコン %>
+        <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+          <i class="bi bi-search text-gray-400 group-focus-within:text-accent transition-colors"></i>
+        </div>
+
+        <%# 検索入力欄：名前(name)とメモ(memo)を同時検索 %>
+        <%= f.search_field :name_or_memo_cont, 
+            placeholder: "パケの名前 や メモで検索 ...", 
+            class: "w-full pl-14 pr-4 py-4 rounded-2xl bg-white border-none text-primary text-sm font-bold shadow-sm focus:ring-2 focus:ring-accent transition-all placeholder:text-gray-300" %>
+        
+        <%# 重要：カテゴリで絞り込んでいる最中なら、そのカテゴリIDを隠しパラメータで保持する %>
+        <% if params.dig(:q, :category_id_eq).present? %>
+          <%= f.hidden_field :category_id_eq, value: params.dig(:q, :category_id_eq) %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
   <%# アイテムが存在するとき、または検索・フィルタリング中の時だけタブを表示 %>
   <% if @items.any? || params[:q].present? %>
     <div class="bg-white/95 backdrop-blur-md border-b border-base-border/50 sticky top-16 z-30 pb-3 pt-2">
