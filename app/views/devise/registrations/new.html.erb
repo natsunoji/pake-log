@@ -25,24 +25,27 @@
       <%# パスワード %>
       <div class="mb-5" data-controller="password-visibility">
         <%= f.label :password, "パスワード（6文字以上）", class: "block text-sm font-bold text-primary mb-2 ml-1" %>
-        <div class="relative flex items-center">
+        <div class="relative w-full">
           <%= f.password_field :password, autocomplete: "new-password", 
               data: { password_visibility_target: "input" },
               class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14 outline-none" %>
-          <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary transition-colors cursor-pointer">
+          <%# 修正点：buttonに inset-y-0 right-0 を使い、flexで中央寄せにする %>
+          <button type="button" data-action="password-visibility#toggle" 
+                  class="absolute inset-y-0 right-0 pr-5 flex items-center text-gray-400 focus:outline-none hover:text-primary transition-colors cursor-pointer">
             <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
           </button>
         </div>
       </div>
 
-      <%# パスワード確認用 %>
+      <%# パスワード確認用（同様に修正） %>
       <div class="mb-8" data-controller="password-visibility">
         <%= f.label :password_confirmation, "パスワード（確認用）", class: "block text-sm font-bold text-primary mb-2 ml-1" %>
-        <div class="relative flex items-center">
+        <div class="relative w-full">
           <%= f.password_field :password_confirmation, autocomplete: "new-password", 
               data: { password_visibility_target: "input" },
               class: "w-full px-5 py-4 border-none rounded-2xl bg-base-bg text-primary text-base focus:ring-2 focus:ring-accent shadow-inner font-bold pr-14 outline-none" %>
-          <button type="button" data-action="password-visibility#toggle" class="absolute right-4 text-gray-400 focus:outline-none hover:text-primary transition-colors cursor-pointer">
+          <button type="button" data-action="password-visibility#toggle" 
+                  class="absolute inset-y-0 right-0 pr-5 flex items-center text-gray-400 focus:outline-none hover:text-primary transition-colors cursor-pointer">
             <i class="bi bi-eye-slash text-xl" data-password-visibility-target="icon"></i>
           </button>
         </div>
