@@ -7,12 +7,18 @@ class User < ApplicationRecord
 
   has_many :categories, dependent: :destroy
   has_many :items, dependent: :destroy
+  has_many :favorites, dependent: :destroy
+  has_many :favorite_items, through: :favorites, source: :item
 
   validates :name, presence: true, length: { maximum: 20 }
   validates :email, presence: true, uniqueness: true
 
   # ユーザー登録直後にデフォルトカテゴリを作成する
   after_create :create_default_categories
+
+  def favorited?(item)
+    favorites.exists?(item_id: item.id)
+  end
 
   private
 

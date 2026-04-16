@@ -25,7 +25,7 @@
     <%# --- アセット設定 --- %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload", preload: false %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
 
     <%# --- ブランディングアセット --- %>
@@ -43,6 +43,13 @@
   </head>
 
   <body class="min-h-screen m-0 p-0 bg-white font-sans antialiased text-primary overflow-x-hidden">
+    <%# --- 🌟：ローディングオーバーレイ --- %>
+    <div id="loading-overlay" class="fixed inset-0 z-[100] hidden items-center justify-center bg-white/60 backdrop-blur-[2px]">
+      <div class="flex flex-col items-center">
+        <div class="animate-spin h-10 w-10 border-4 border-accent border-t-transparent rounded-full mb-4"></div>
+        <p class="text-xs font-bold text-primary animate-pulse">読み込み中...</p>
+      </div>
+    </div>
     
     <%# --- 1. ヘッダー判定ロジック --- %>
     <% 
@@ -51,6 +58,9 @@
                         (devise_controller? && !user_signed_in?) || 
                         (user_signed_in? && controller_name == 'items' && action_name == 'index') || 
                         (user_signed_in? && controller_name == 'settings' && action_name == 'show')
+      
+      # 🌟修正：規約・プラポリを判定
+      is_static_page = (controller_name == 'static_pages' && (action_name == 'terms' || action_name == 'privacy'))
 
       unless is_logo_header
         # 🌟 content_for で指定があれば優先、なければデフォルト判定
@@ -89,17 +99,21 @@
     %>
 
     <%# --- 2. ヘッダーの描画 --- %>
-    <% if is_logo_header %>
-      <%= render 'shared/header' %>
-    <% else %>
-      <%= render 'shared/header', 
-          title: p_title, 
-          back_path: p_back, 
-          right_content: (content_for?(:header_right) ? yield(:header_right) : nil) %>
+    <%# 🌟修正：is_static_page の時はレイアウト側での描画を完全にスキップする %>
+    <% unless is_static_page %>
+      <% if is_logo_header %>
+        <%= render 'shared/header' %>
+      <% else %>
+        <%= render 'shared/header', 
+            title: p_title, 
+            back_path: p_back, 
+            right_content: (content_for?(:header_right) ? yield(:header_right) : nil) %>
+      <% end %>
     <% end %>
 
     <%# --- 3. メインコンテンツ --- %>
-    <main class="w-full <%= is_logo_header ? 'pt-16' : 'pt-12' %>">
+    <%# 🌟修正：is_static_page（個別にヘッダーを書くページ）は padding-top を 0 にする（ヘッダー分の余白はView側で持つ） %>
+    <main class="w-full <%= is_static_page ? '' : (is_logo_header ? 'pt-16' : 'pt-12') %>">
       <%= render 'shared/flash_messages' %>
       <%= yield %>
     </main>

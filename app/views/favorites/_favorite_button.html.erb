@@ -1,0 +1,13 @@
+<div id="favorite_button_<%= item.id %>">
+  <% if current_user.favorited?(item) %>
+    <%# 🌟 削除（解除）のリクエスト %>
+    <%= link_to item_favorite_path(item), data: { turbo_method: :delete }, class: "inline-block p-2" do %>
+      <i class="bi bi-star-fill text-amber-400 text-xl"></i>
+    <% end %>
+  <% else %>
+    <%# 🌟 作成（登録）のリクエスト %>
+    <%= link_to item_favorite_path(item), data: { turbo_method: :post }, class: "inline-block p-2" do %>
+      <i class="bi bi-star text-gray-300 text-xl hover:text-amber-200"></i>
+    <% end %>
+  <% end %>
+</div>

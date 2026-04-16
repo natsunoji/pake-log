@@ -17,7 +17,11 @@ Rails.application.routes.draw do
   resource :settings, only: [ :show ], controller: "settings"
 
   # 3. アイテムに関するルート
-  resources :items
+  resources :items do
+    # 🌟 アイテムに紐付く「お気に入り」ルートを追加
+    # 単数形 resource にすることで、ID不要の /items/:item_id/favorite が生成される
+    resource :favorite, only: [ :create, :destroy ]
+  end
 
   # 4. カテゴリに関するルートを追加
   resources :categories, only: [ :index, :create, :edit, :update, :destroy ]

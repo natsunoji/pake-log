@@ -3,17 +3,26 @@
 @tailwind utilities;
 
 @layer base {
-  /* 幅固定バグ対策 */
+  /* 🌟 幅固定バグ対策 */
   html, body {
     width: 100% !important;
     max-width: none !important;
   }
 
-  /* セレクトボックスの標準矢印を、アプリ全体で本質的に無効化する */
-  /* appearance: none をここで指定することで、HTML側の記述がスッキリする */
+  /* 🌟 セレクトボックスの標準矢印を無効化 */
   select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+  }
+
+  /* 🌟 ローディング画面の制御 */
+  /* Turboが読み込み中（data-turbo-loading）の時だけ表示する */
+  #loading-overlay {
+    display: none;
+  }
+
+  html[data-turbo-loading] #loading-overlay {
+    display: flex;
   }
 }

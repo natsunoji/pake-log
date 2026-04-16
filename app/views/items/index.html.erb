@@ -27,22 +27,34 @@
     <% end %>
   </div>
 
-  <%# アイテムが存在するとき、または検索・フィルタリング中の時だけタブを表示 %>
+<%# アイテムが存在するとき、または検索・フィルタリング中の時だけタブを表示 %>
   <% if @items.any? || params[:q].present? %>
     <div class="bg-white/95 backdrop-blur-md border-b border-base-border/50 sticky top-16 z-30 pb-3 pt-2">
       <div class="flex items-center px-3 gap-2">
         <%# --- カテゴリタブ（スクロールエリア） --- %>
         <div class="flex-grow flex overflow-x-auto space-x-2 no-scrollbar">
-          <% all_active = params[:q].blank? || params.dig(:q, :category_id_eq).blank? %>
+          
+          <%# --- 1. 「全て」ボタン --- %>
+          <%# 修正：お気に入りフィルタが立っている時もOFFになるように判定を追加 %>
+          <% all_active = params[:q].blank? || (params.dig(:q, :category_id_eq).blank? && params.dig(:q, :favorited).blank?) %>
           <%= link_to items_path, 
-              class: "#{all_active ? 'bg-accent border-accent' : 'bg-gray-100 border-transparent'} text-primary px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95" do %>
+              class: "#{all_active ? 'bg-accent border-accent text-primary' : 'bg-gray-100 border-transparent text-primary/60'} px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95" do %>
             全て
           <% end %>
 
+          <%# --- 2. 🌟 お気に入りフィルタタブ --- %>
+          <% favorite_active = params.dig(:q, :favorited).present? %>
+          <%= link_to items_path(q: { favorited: 'true' }), 
+              class: "#{favorite_active ? 'bg-amber-400 border-amber-400 text-primary' : 'bg-gray-100 border-transparent text-primary/60'} px-5 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95 flex items-center gap-1" do %>
+            <i class="bi <%= favorite_active ? 'bi-star-fill' : 'bi-star' %>"></i>
+          <% end %>
+
+          <%# --- 3. 各カテゴリ --- %>
           <% @categories.each do |category| %>
-            <% is_active = params.dig(:q, :category_id_eq).to_s == category.id.to_s %>
+            <%# 修正：お気に入りフィルタがONの時は、カテゴリIDが一致していてもアクティブにしない %>
+            <% is_active = !favorite_active && params.dig(:q, :category_id_eq).to_s == category.id.to_s %>
             <%= link_to items_path(q: { category_id_eq: category.id }), 
-                class: "#{is_active ? 'bg-accent border-accent' : 'bg-gray-100 border-transparent'} text-primary px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95" do %>
+                class: "#{is_active ? 'bg-accent border-accent text-primary' : 'bg-gray-100 border-transparent text-primary/60'} px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap border transition-all shadow-sm active:scale-95" do %>
               <%= category.name %>
             <% end %>
           <% end %>
@@ -124,33 +136,43 @@
       <% end %>
     <% else %>
       <%# --- アイテムリスト表示 --- %>
+      <%# --- アイテムリスト表示部分の修正 --- %>
       <% @items.each do |item| %>
-        <%= link_to item_path(item), class: "bg-white p-4 rounded-3xl shadow-sm flex items-center w-full active:scale-[0.98] transition-all duration-100 border border-transparent active:border-base-border" do %>
-          <div class="w-20 h-20 bg-base-bg rounded-2xl mr-4 flex-shrink-0 overflow-hidden border border-black/5 flex items-center justify-center">
-            <% if item.images.attached? %>
-              <%= cl_image_tag item.images.first.key, 
-                  transformation: [ { width: 400, height: 400, crop: :fill }, { fetch_format: :auto, quality: :auto } ],
-                  class: "w-full h-full object-cover" %>
-            <% else %>
-              <div class="w-full h-full flex items-center justify-center text-gray-300">
-                <i class="bi bi-image text-2xl"></i>
-              </div>
-            <% end %>
-          </div>
+        <div class="relative"> <%# 🌟 リンクとボタンを重ねるための親要素 %>
+          
+          <%# 1. メインのカードリンク %>
+          <%= link_to item_path(item), class: "bg-white p-4 rounded-3xl shadow-sm flex items-center w-full active:scale-[0.98] transition-all duration-100 border border-transparent active:border-base-border" do %>
+            <div class="w-20 h-20 bg-base-bg rounded-2xl mr-4 flex-shrink-0 overflow-hidden border border-black/5 flex items-center justify-center">
+              <% if item.images.attached? %>
+                <%= cl_image_tag item.images.first.key, 
+                    transformation: [ { width: 400, height: 400, crop: :fill }, { fetch_format: :auto, quality: :auto } ],
+                    class: "w-full h-full object-cover" %>
+              <% else %>
+                <div class="w-full h-full flex items-center justify-center text-gray-300">
+                  <i class="bi bi-image text-2xl"></i>
+                </div>
+              <% end %>
+            </div>
 
-          <div class="flex-grow min-w-0">
-            <h3 class="font-bold text-primary text-lg leading-tight mb-2 truncate"><%= item.name %></h3>
-            <% if item.category.present? %>
-              <div class="inline-flex items-center justify-center h-6 px-3 rounded-full bg-accent text-primary shadow-sm border border-accent/20">
-                <span class="text-[10px] font-black uppercase leading-none mt-[1px]"><%= item.category.name %></span>
-              </div>
-            <% end %>
-          </div>
+            <div class="flex-grow min-w-0 pr-10"> <%# 🌟 右側にボタン用の余白(pr-10)を追加 %>
+              <h3 class="font-bold text-primary text-lg leading-tight mb-2 truncate"><%= item.name %></h3>
+              <% if item.category.present? %>
+                <div class="inline-flex items-center justify-center h-6 px-3 rounded-full bg-accent text-primary shadow-sm border border-accent/20">
+                  <span class="text-[10px] font-black uppercase leading-none mt-[1px]"><%= item.category.name %></span>
+                </div>
+              <% end %>
+            </div>
 
-          <div class="text-[10px] text-base-text self-end pb-1 whitespace-nowrap ml-2 opacity-70 font-mono italic">
-            <%= time_ago_in_words(item.updated_at) %>前
+            <div class="text-[10px] text-base-text self-end pb-1 whitespace-nowrap ml-2 opacity-70 font-mono italic">
+              <%= time_ago_in_words(item.updated_at) %>前
+            </div>
+          <% end %>
+
+          <%# 2. お気に入りボタン（リンクの上に絶対配置） %>
+          <div class="absolute right-4 top-1/2 -translate-y-1/2 z-20">
+            <%= render 'favorites/favorite_button', item: item %>
           </div>
-        <% end %>
+        </div>
       <% end %>
     <% end %>
   </div>
