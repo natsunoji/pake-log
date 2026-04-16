@@ -10,7 +10,6 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-GT0E2E9RMM');
       </script>
     <% end %>
@@ -29,61 +28,63 @@
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload", preload: false %>
     <%= javascript_importmap_tags %>
 
-    <%# --- ブランディングアセット (favicon/AppIcon) --- %>
+    <%# --- ブランディングアセット --- %>
     <%= favicon_link_tag 'favicon.png' %>
     <%= favicon_link_tag 'apple-touch-icon.png', rel: 'apple-touch-icon', type: 'image/png' %>
 
-    <%# --- OGP (SNS共有用) 設定 --- %>
+    <%# --- OGP 設定 --- %>
     <meta property="og:site_name" content="PakeLog" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="PakeLog - 情報記録用写真の「保管庫」アプリ" />
-    <meta property="og:description" content="アルバムを汚さない。情報はパケログへ。残したい情報を整理して保管できる自分だけの専用アーカイブ。" />
+    <meta property="og:description" content="アルバムを汚さない。情報はパケログへ。" />
     <meta property="og:url" content="<%= request.original_url %>" />
     <meta property="og:image" content="<%= asset_url('ogp.png') %>" />
-    
-    <%# SNSで大きく表示するための設定 %>
     <meta name="twitter:card" content="summary_large_image" />
   </head>
 
   <body class="min-h-screen m-0 p-0 bg-white font-sans antialiased text-primary overflow-x-hidden">
     
-    <%# --- 1. ヘッダー判定・変数準備ロジック --- %>
+    <%# --- 1. ヘッダー判定ロジック --- %>
     <% 
-      # ロゴヘッダー(パターンB)を出す条件
       is_top_page = (controller_name == 'welcomes' && action_name == 'index')
-      
       is_logo_header = is_top_page || 
                         (devise_controller? && !user_signed_in?) || 
                         (user_signed_in? && controller_name == 'items' && action_name == 'index') || 
                         (user_signed_in? && controller_name == 'settings' && action_name == 'show')
 
-      # 白ヘッダー(パターンA)の場合のタイトルと戻り先
       unless is_logo_header
-        case controller_name
-        when 'items'
-          case action_name
-          when 'new', 'create' then p_title, p_back = ["パケを登録", items_path]
-          when 'edit', 'update' then p_title, p_back = ["パケを編集", item_path(@item)]
-          when 'show' then p_title, p_back = ["パケの詳細", items_path]
-          end
-        when 'static_pages', 'welcomes'
-          p_title = case action_name
-                    when 'terms' then "利用規約"
-                    when 'privacy' then "プライバシーポリシー"
-                    when 'contact' then "お問い合わせ"
-                    else "PakeLog"
-                    end
-          p_back = user_signed_in? ? settings_path : root_path
-        when 'registrations', 'profiles'
-          p_title, p_back = ["プロフィール編集", settings_path]
-        when 'categories'
-          p_title, p_back = ["カテゴリの設定", items_path]
-        else
-          p_title, p_back = ["PakeLog", root_path]
+        # 🌟 content_for で指定があれば優先、なければデフォルト判定
+        p_title = content_for(:page_title) || case controller_name
+          when 'items'
+            case action_name
+            when 'new', 'create' then "パケを登録"
+            when 'edit', 'update' then "パケを編集"
+            when 'show' then "パケの詳細"
+            end
+          when 'static_pages', 'welcomes'
+            case action_name
+            when 'terms' then "利用規約"
+            when 'privacy' then "プライバシーポリシー"
+            when 'contact' then "お問い合わせ"
+            else "PakeLog"
+            end
+          when 'registrations', 'profiles' then "プロフィール編集"
+          when 'categories' then "カテゴリの設定"
+          else "PakeLog"
+        end
+
+        p_back = content_for(:back_path) || case controller_name
+          when 'items'
+            case action_name
+            when 'new', 'create', 'show' then items_path
+            when 'edit', 'update' then item_path(@item)
+            end
+          when 'static_pages', 'welcomes' then (user_signed_in? ? settings_path : root_path)
+          when 'registrations', 'profiles', 'categories' then settings_path
+          else root_path
         end
       end
 
-      # ボトムナビを隠すページ
       hide_bottom_nav = devise_controller? || controller_name == 'static_pages' || controller_name == 'welcomes'
     %>
 
@@ -103,17 +104,15 @@
       <%= yield %>
     </main>
 
-    <%# --- 4. ボトムナビ --- %>
+    <%# --- 4. ボトムナビ / フッター / モーダル --- %>
     <% if user_signed_in? && !hide_bottom_nav %>
       <%= render 'shared/bottom_navigation' %>
     <% end %>
 
-    <%# --- 5. フッター --- %>
     <% if !user_signed_in? || controller_name == 'static_pages' || controller_name == 'welcomes' %>
       <%= render 'shared/footer' %>
     <% end %>
 
-    <%# --- 6. ログアウトモーダル --- %>
     <% if user_signed_in? %>
       <%= render 'shared/logout_modal' %>
     <% end %>
