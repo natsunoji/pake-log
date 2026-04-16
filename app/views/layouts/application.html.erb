@@ -26,7 +26,7 @@
     <%# --- アセット設定 --- %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload", preload: false %>
     <%= javascript_importmap_tags %>
 
     <%# --- ブランディングアセット (favicon/AppIcon) --- %>
