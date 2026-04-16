@@ -3,14 +3,21 @@ class ItemsController < ApplicationController
   before_action :set_item, only: %i[show edit update destroy]
 
   def index
+    # Ransackの初期化
     @q = current_user.items.ransack(params[:q])
-    @items = @q.result(distinct: true)
-                .includes(:category, images_attachments: :blob)
-                .order(updated_at: :desc)
 
-    # ビューで使用するカテゴリ一覧を、ログインユーザーのものに限定して取得
-    @categories = current_user.categories.rank(:row_order)
+    # 🌟 Ransackの結果ではなく、お気に入り時は強制的にスコープを上書きする
+    if params.dig(:q, :favorited) == "true"
+      @items = current_user.items.favorited_by(current_user.id)
+    else
+      @items = @q.result(distinct: true)
     end
+
+    # 共通の処理
+    @items = @items.includes(:category, images_attachments: :blob)
+                    .order(updated_at: :desc)
+    @categories = current_user.categories.rank(:row_order)
+  end
 
   def show
   end

@@ -6,4 +6,4 @@ import * as ActiveStorage from "@rails/activestorage"
 window.ActiveStorage = ActiveStorage
 ActiveStorage.start()
 
-Turbo.session.drive = false
+Turbo.session.drive = true

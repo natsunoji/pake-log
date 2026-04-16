@@ -5,7 +5,7 @@ class Category < ApplicationRecord
   ranks :row_order, with_same: :user_id
 
   belongs_to :user
-  has_many :items, dependent: :restrict_with_error
+  has_many :items, dependent: :nullify
 
   validates :name, presence: true, length: { maximum: 20 }
   validates :name, uniqueness: { scope: :user_id }

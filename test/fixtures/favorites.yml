@@ -1,0 +1,7 @@
+favorite_one:
+  user: standard_user  # 🌟 standard_user が item_one をお気に入りしている
+  item: one
+
+favorite_two:
+  user: another_user   # 🌟 another_user が item_one をお気に入りしている
+  item: one
