@@ -26,7 +26,7 @@ class CategoriesController < ApplicationController
     # row_order_position という仮想カラムを通じて保存する
     if @category.update(category_params)
       respond_to do |format|
-        format.html { redirect_to categories_path, notice: "カテゴリを更新しました" }
+        format.html { redirect_to categories_path, notice: "カテゴリを更新しました", status: :see_other }
         format.json { render json: @category } # 🌟 JS（patch）にはJSONで返す
       end
     else

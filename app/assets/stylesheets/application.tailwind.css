@@ -9,20 +9,12 @@
     max-width: none !important;
   }
 
-  /* 🌟 セレクトボックスの標準矢印を無効化 */
-  select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-  }
-
-  /* 🌟 ローディング画面の制御 */
-  /* Turboが読み込み中（data-turbo-loading）の時だけ表示する */
   #loading-overlay {
-    display: none;
+    display: none !important;
   }
 
-  html[data-turbo-loading] #loading-overlay {
-    display: flex;
+  /* 🌟 JSで flex がついた時だけ、最優先で表示する */
+  #loading-overlay.flex {
+    display: flex !important;
   }
 }

@@ -25,7 +25,7 @@
     <%# --- アセット設定 --- %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", preload: false %>
     <%= javascript_importmap_tags %>
 
     <%# --- ブランディングアセット --- %>
@@ -44,10 +44,21 @@
 
   <body class="min-h-screen m-0 p-0 bg-white font-sans antialiased text-primary overflow-x-hidden">
     <%# --- 🌟：ローディングオーバーレイ --- %>
-    <div id="loading-overlay" class="fixed inset-0 z-[100] hidden items-center justify-center bg-white/60 backdrop-blur-[2px]">
-      <div class="flex flex-col items-center">
-        <div class="animate-spin h-10 w-10 border-4 border-accent border-t-transparent rounded-full mb-4"></div>
-        <p class="text-xs font-bold text-primary animate-pulse">読み込み中...</p>
+    <div id="loading-overlay" 
+        style="display: none; z-index: 9999;" 
+        class="fixed inset-0 items-center justify-center bg-black/50 backdrop-blur-sm">
+      
+      <%# 🌟 border-radius: 2rem !important; で確実に角を丸くする %>
+      <div style="border-radius: 2rem !important;" 
+          class="flex flex-col items-center justify-center bg-white p-8 shadow-2xl min-w-[160px] aspect-square">
+        
+        <%# ぐるぐるスピナー %>
+        <div class="animate-spin h-10 w-10 border-4 border-accent border-t-transparent rounded-full mb-6"></div>
+        
+        <%# 🌟 テキストエリア：ここが JS で書き換わる %>
+        <p class="text-primary flex flex-col items-center justify-center w-full text-center">
+          読み込み中...
+        </p>
       </div>
     </div>
     
@@ -83,7 +94,7 @@
           else "PakeLog"
         end
 
-        p_back = content_for(:back_path) || case controller_name
+        p_back = content_for(:back_path).presence || case controller_name
           when 'items'
             case action_name
             when 'new', 'create', 'show' then items_path
