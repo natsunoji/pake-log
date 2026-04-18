@@ -24,7 +24,7 @@ const hideLoader = () => {
 
 // 🌟 保存時
 document.addEventListener("turbo:submit-start", () => {
-  showLoader("パケを登録中...");
+  showLoader("LOADING...");
 });
 
 // 🌟 終了時
