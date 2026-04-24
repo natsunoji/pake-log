@@ -2,19 +2,13 @@ default: &default
   adapter: postgresql
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  # ↓ ここを localhost に変更
-  host: <%= ENV['DATABASE_HOST'] || 'localhost' %>
-  username: <%= ENV['DATABASE_USER'] || 'postgres' %>
-  password: <%= ENV['DATABASE_PASSWORD'] || 'password' %>
+  # ENV['DATABASE_URL'] があればそれを使う（なければローカルのpostgresを使う設定も可能だが、まずはこれだけでOK）
+  url: <%= ENV['DATABASE_URL'] || 'postgres://localhost/pake_log_development' %>
 
 development:
   <<: *default
   database: pake_log_development
-  # ↓ ここも明示的に localhost にする
-  host: localhost
 
 test:
   <<: *default
   database: pake_log_test
-  # テスト環境も localhost を使用
-  host: localhost
