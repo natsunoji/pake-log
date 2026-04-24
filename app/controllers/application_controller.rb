@@ -1,8 +1,6 @@
 class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
-  before_action :check_maintenance_mode
-
   before_action :configure_permitted_parameters, if: :devise_controller?
 
   protected
@@ -20,12 +18,6 @@ class ApplicationController < ActionController::Base
   end
 
   private
-
-  def check_maintenance_mode
-    if ENV["MAINTENANCE_MODE"] == "true"
-      render file: Rails.root.join("public", "maintenance.html"), layout: false, status: :service_unavailable
-    end
-  end
 
   # ログアウト・退会後にトップ画面（LP）へ飛ばす
   def after_sign_out_path_for(resource_or_scope)
